@@ -7,6 +7,12 @@ import { appConfig } from './app.config';
 import { BullModule } from '@nestjs/bull';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-store';
+import { PostsModule } from './modules/posts/posts.module';
+import { ContentSourcesModule } from './modules/content_sources/content_sources.module';
+import { CategoriesModule } from './modules/categories/categories.module';
+import { CommentsModule } from './modules/comments/comments.module';
+import { TagsModule } from './modules/tags/tags.module';
+import { SharePostsModule } from './modules/share_posts/share_posts.module';
 @Module({
 	imports: [
 		TypeOrmModule.forRootAsync({
@@ -50,6 +56,12 @@ import { redisStore } from 'cache-manager-redis-store';
 		}),
 		AuthModule,
 		UsersModule,
+		PostsModule,
+		ContentSourcesModule,
+		CategoriesModule,
+		CommentsModule,
+		TagsModule,
+		SharePostsModule,
 	],
 	controllers: [],
 	providers: [],
