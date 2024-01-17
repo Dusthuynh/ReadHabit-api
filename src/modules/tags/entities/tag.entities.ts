@@ -11,7 +11,7 @@ export class Tag extends BaseObject {
 	@Column()
 	categoryId: number;
 
-	@ManyToMany(() => Post, (post: Post) => post)
+	@ManyToMany(() => Post, (post: Post) => post.tags)
 	@JoinTable({ name: 'post_tag' })
 	posts: Post[];
 

@@ -1,3 +1,4 @@
+import { BookmarkPost } from 'src/modules/bookmark_posts/entities/bookmark_post.entity';
 import { Category } from 'src/modules/categories/entities/category.entity';
 import { Comment } from 'src/modules/comments/entities/comment.entity';
 import { ContentSource } from 'src/modules/content_sources/entities/content_source.entity';
@@ -38,13 +39,13 @@ export class Post extends BaseObject {
 	@Column()
 	readTime: number;
 
-	@Column()
+	@Column({ default: 0 })
 	totalLike: number;
 
-	@Column()
+	@Column({ default: 0 })
 	totalDislike: number;
 
-	@Column()
+	@Column({ default: 0 })
 	totalShare: number;
 
 	@Column()
@@ -56,7 +57,7 @@ export class Post extends BaseObject {
 	@Column({ nullable: true })
 	contentSourceId: number;
 
-	@ManyToOne(() => Category, (category: Category) => category.posts)
+	@ManyToOne(() => Category)
 	category: Category;
 
 	@ManyToOne(() => User)
@@ -68,6 +69,12 @@ export class Post extends BaseObject {
 	@OneToMany(() => Comment, (comment: Comment) => comment.post)
 	comments: Comment[];
 
-	@ManyToMany(() => Tag, (tag: Tag) => tag)
+	@ManyToMany(() => Tag, (tag: Tag) => tag.posts)
 	tags: Tag[];
+
+	@OneToMany(
+		() => BookmarkPost,
+		(bookmarkPost: BookmarkPost) => bookmarkPost.post,
+	)
+	bookmarkPosts: BookmarkPost[];
 }

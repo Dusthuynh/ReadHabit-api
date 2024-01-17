@@ -1,6 +1,9 @@
+import { Bookmark } from 'src/modules/bookmarks/entities/bookmark.entity';
 import { Category } from 'src/modules/categories/entities/category.entity';
 import { Comment } from 'src/modules/comments/entities/comment.entity';
+import { Notification } from 'src/modules/notifications/entities/notification.entity';
 import { Post } from 'src/modules/posts/entities/post.entity';
+import { Rank } from 'src/modules/ranks/entities/rank.entity';
 import { SharePost } from 'src/modules/share_posts/entities/share_post.entity';
 import { BaseObject } from 'src/shared/entities/base-object.entity';
 import { Column, Entity, OneToMany, ManyToMany, AfterLoad } from 'typeorm';
@@ -62,6 +65,18 @@ export class User extends BaseObject {
 
 	@OneToMany(() => SharePost, (sharePost: SharePost) => sharePost.sharedBy)
 	sharePosts: SharePost[];
+
+	@ManyToMany(
+		() => Notification,
+		(notification: Notification) => notification.users,
+	)
+	notifications: Notification[];
+
+	@OneToMany(() => Rank, (rank: Rank) => rank.owner)
+	ranks: Rank[];
+
+	@OneToMany(() => Bookmark, (bookmark: Bookmark) => bookmark.owner)
+	bookmarks: Bookmark[];
 
 	@AfterLoad()
 	updateFullName() {
