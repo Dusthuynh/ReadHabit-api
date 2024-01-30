@@ -1,6 +1,7 @@
 export enum POST_STATUS {
 	CREATED = 'created',
 	REVIEWING = 'reviewing',
+	REJECT = 'reject',
 	PUBLISHED = 'published',
 }
 

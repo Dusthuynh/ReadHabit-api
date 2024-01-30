@@ -7,6 +7,9 @@ export class RankLevel extends BaseObject {
 	@Column()
 	name: string;
 
+	@Column({ nullable: true })
+	imageURL: string;
+
 	@OneToMany(() => Rank, (rank: Rank) => rank.rankLevel)
 	ranks: Rank[];
 }

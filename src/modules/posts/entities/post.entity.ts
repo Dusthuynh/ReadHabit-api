@@ -24,11 +24,17 @@ export class Post extends BaseObject {
 	@Column()
 	content: string;
 
-	@Column()
-	description: string;
+	@Column({ default: 0 })
+	sharePostId: number;
+
+	@Column({ nullable: true })
+	originalPostURL: string;
 
 	@Column()
 	publishDate: Date;
+
+	@Column({ nullable: true })
+	imageURL: string;
 
 	@Column({ type: 'enum', enum: POST_STATUS })
 	status: POST_STATUS;
@@ -48,6 +54,7 @@ export class Post extends BaseObject {
 	@Column({ default: 0 })
 	totalShare: number;
 
+	// RELATION
 	@Column()
 	categoryId: number;
 

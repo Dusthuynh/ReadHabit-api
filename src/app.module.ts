@@ -12,7 +12,6 @@ import { ContentSourcesModule } from './modules/content_sources/content_sources.
 import { CategoriesModule } from './modules/categories/categories.module';
 import { CommentsModule } from './modules/comments/comments.module';
 import { TagsModule } from './modules/tags/tags.module';
-import { SharePostsModule } from './modules/share_posts/share_posts.module';
 import { FollowsModule } from './modules/follows/follows.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { RanksModule } from './modules/ranks/ranks.module';
@@ -21,7 +20,6 @@ import { FeedbackModule } from './modules/feedbacks/feedbacks.module';
 import { BookmarksModule } from './modules/bookmarks/bookmarks.module';
 import { BookmarkPostsModule } from './modules/bookmark_posts/bookmark_posts.module';
 import { EventLogsModule } from './modules/event_logs/event_logs.module';
-import { PhotosModule } from './modules/photos/photos.module';
 @Module({
 	imports: [
 		TypeOrmModule.forRootAsync({
@@ -70,7 +68,6 @@ import { PhotosModule } from './modules/photos/photos.module';
 		CategoriesModule,
 		CommentsModule,
 		TagsModule,
-		SharePostsModule,
 		FollowsModule,
 		NotificationsModule,
 		RanksModule,
@@ -79,7 +76,6 @@ import { PhotosModule } from './modules/photos/photos.module';
 		BookmarksModule,
 		BookmarkPostsModule,
 		EventLogsModule,
-		PhotosModule,
 	],
 	controllers: [],
 	providers: [],

@@ -9,6 +9,10 @@ export class Category extends BaseObject {
 	@Column()
 	name: string;
 
+	@Column({ nullable: true })
+	imageURL: string;
+
+	//RELATION
 	@ManyToMany(() => User, (user: User) => user.categories)
 	@JoinTable({ name: 'user_category' })
 	users: User[];

@@ -8,7 +8,7 @@ export class ContentSource extends BaseObject {
 	name: string;
 
 	@Column()
-	avatarURL: string;
+	avatar: string;
 
 	@OneToMany(() => Post, (post: Post) => post.contentSource)
 	posts: Post[];

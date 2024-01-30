@@ -4,7 +4,6 @@ import { Comment } from 'src/modules/comments/entities/comment.entity';
 import { Notification } from 'src/modules/notifications/entities/notification.entity';
 import { Post } from 'src/modules/posts/entities/post.entity';
 import { Rank } from 'src/modules/ranks/entities/rank.entity';
-import { SharePost } from 'src/modules/share_posts/entities/share_post.entity';
 import { BaseObject } from 'src/shared/entities/base-object.entity';
 import { Column, Entity, OneToMany, ManyToMany, AfterLoad } from 'typeorm';
 
@@ -16,6 +15,9 @@ export class User extends BaseObject {
 	@Column({ unique: true })
 	username: string;
 
+	@Column()
+	password: string;
+
 	@Column({ nullable: true })
 	firstName: string;
 
@@ -25,24 +27,8 @@ export class User extends BaseObject {
 	@Column({ nullable: true })
 	fullName: string;
 
-	@Column()
-	password: string;
-
 	@Column({ nullable: true })
 	refreshToken: string;
-
-	@Column()
-	active: boolean;
-
-	@Column({
-		nullable: true,
-	})
-	position: string;
-
-	@Column({
-		nullable: true,
-	})
-	job: string;
 
 	@Column({
 		nullable: true,
@@ -54,6 +40,7 @@ export class User extends BaseObject {
 	})
 	birthday: Date;
 
+	// RELATION
 	@ManyToMany(() => Category, (category: Category) => category.users)
 	categories: Category[];
 
@@ -62,9 +49,6 @@ export class User extends BaseObject {
 
 	@OneToMany(() => Comment, (comment: Comment) => comment.createdBy)
 	comments: Comment[];
-
-	@OneToMany(() => SharePost, (sharePost: SharePost) => sharePost.sharedBy)
-	sharePosts: SharePost[];
 
 	@ManyToMany(
 		() => Notification,
