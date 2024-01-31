@@ -12,11 +12,11 @@ export class User extends BaseObject {
 	@Column({ unique: true })
 	email: string;
 
-	@Column({ unique: true })
-	username: string;
-
 	@Column()
 	password: string;
+
+	@Column()
+	username: string;
 
 	@Column({ nullable: true })
 	firstName: string;
@@ -39,6 +39,9 @@ export class User extends BaseObject {
 		nullable: true,
 	})
 	birthday: Date;
+
+	@Column({ nullable: true })
+	avatar: string;
 
 	// RELATION
 	@ManyToMany(() => Category, (category: Category) => category.users)

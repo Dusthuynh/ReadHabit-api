@@ -1,11 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
-import { Public } from '../auth/utils';
+import { Controller } from '@nestjs/common';
 
 @Controller('posts')
-export class PostsController {
-	@Public()
-	@Get('')
-	getManyPosts() {
-		return 'get list post';
-	}
-}
+export class PostsController {}

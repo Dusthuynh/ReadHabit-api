@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -20,6 +20,10 @@ import { FeedbackModule } from './modules/feedbacks/feedbacks.module';
 import { BookmarksModule } from './modules/bookmarks/bookmarks.module';
 import { BookmarkPostsModule } from './modules/bookmark_posts/bookmark_posts.module';
 import { EventLogsModule } from './modules/event_logs/event_logs.module';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { GlobalExceptionFilter } from './exception-filters/global-exception.filter';
+import { AppLoggerMiddleware } from './interceptors/logging.interceptor';
+import { JwtAccessTokenAuthGuard } from './modules/auth/guards/jwt-access-token-auth.guard';
 @Module({
 	imports: [
 		TypeOrmModule.forRootAsync({
@@ -78,6 +82,23 @@ import { EventLogsModule } from './modules/event_logs/event_logs.module';
 		EventLogsModule,
 	],
 	controllers: [],
-	providers: [],
+	providers: [
+		{
+			provide: APP_GUARD,
+			useClass: JwtAccessTokenAuthGuard,
+		},
+		{
+			provide: APP_FILTER,
+			useClass: GlobalExceptionFilter,
+		},
+	],
 })
-export class AppModule {}
+export class AppModule {
+	configure(consumer: MiddlewareConsumer): void {
+		consumer.apply(AppLoggerMiddleware).forRoutes('*');
+	}
+
+	constructor() {
+		console.log({ appConfig });
+	}
+}
