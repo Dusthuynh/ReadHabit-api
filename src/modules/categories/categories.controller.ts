@@ -36,7 +36,7 @@ export class CategoriesController {
 	@ApiOperation({
 		summary: 'Get Category By Id',
 	})
-	findUserById(@Param('id', ParseIntPipe) id: number) {
+	findCategoryById(@Param('id', ParseIntPipe) id: number) {
 		return id;
 	}
 
@@ -143,7 +143,7 @@ export class CategoriesController {
 		summary: 'Delete Category By Id',
 	})
 	deleteCategory(@Param('id', ParseIntPipe) id: number) {
-		//TODO: Before delete user, check the related
+		//TODO: Before delete category, check the related
 		return id;
 	}
 }

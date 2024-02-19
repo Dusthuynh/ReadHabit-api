@@ -1,3 +1,3 @@
-import { DefaultListDto } from '../../../shared/dto/default-list-dto';
+import { DefaultListDto } from 'src/shared/dto/default-list-dto';
 
 export class GetUserDto extends DefaultListDto {}

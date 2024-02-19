@@ -6,14 +6,6 @@ import { ESortField, ESortOrder } from '../enum/sort.enum';
 export class DefaultListDto {
 	@ApiProperty({
 		required: false,
-		description: 'lti key',
-	})
-	@IsOptional()
-	@IsString()
-	ltik?: string;
-
-	@ApiProperty({
-		required: false,
 		description: 'Number of items limited',
 		default: 10,
 	})
