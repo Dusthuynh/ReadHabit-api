@@ -32,7 +32,7 @@ export class TagsController {
 	@ApiOperation({
 		summary: 'Get Tag By Id',
 	})
-	findUserById(@Param('id', ParseIntPipe) id: number) {
+	findPostById(@Param('id', ParseIntPipe) id: number) {
 		return id;
 	}
 

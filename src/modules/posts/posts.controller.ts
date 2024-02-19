@@ -1,4 +1,148 @@
-import { Controller } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	Delete,
+	Get,
+	Param,
+	ParseIntPipe,
+	Patch,
+	Post,
+	Query,
+	UploadedFile,
+	UseInterceptors,
+} from '@nestjs/common';
+import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Public } from '../auth/utils';
+import { GetPostDto } from './dto/get-post.dto';
+import { DefaultListDto } from 'src/shared/dto/default-list-dto';
+import { CreatePostDto } from './dto/create-post.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { storageConfig } from 'helpers/config';
+import { UpdatePostDto } from './dto/update-post.dto';
+import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 
 @Controller('posts')
-export class PostsController {}
+@ApiTags('posts')
+export class PostsController {
+	@Public()
+	@Get('')
+	@ApiOperation({
+		summary: 'Get many Post',
+	})
+	getManyPost(@Query() filter: GetPostDto) {
+		return filter;
+	}
+
+	@Public()
+	@Get(':id')
+	@ApiOperation({
+		summary: 'Get Post by Id',
+	})
+	findPostById(@Param('id', ParseIntPipe) id: number) {
+		return id;
+	}
+
+	@Public()
+	@Post()
+	@ApiOperation({
+		summary: 'Create Post',
+	})
+	@ApiConsumes('multipart/form-data')
+	@UseInterceptors(
+		FileInterceptor('postImage', {
+			storage: storageConfig('post'),
+			fileFilter(req, file, cb) {
+				if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+					req.fileValidationError =
+						'Wrong extension type. Accepted file ext are: jpg|jpeg|png';
+					cb(null, false);
+				} else {
+					const fileSize = parseInt(req.headers['content-length']);
+					if (fileSize > 1024 * 1024 * 5) {
+						req.fileValidationError =
+							'File size is too large. Accepted file size is less than 5MB';
+						cb(null, false);
+					} else {
+						cb(null, true);
+					}
+				}
+			},
+		}),
+	)
+	createPost(
+		@Body() input: CreatePostDto,
+		@UploadedFile() postImage: Express.Multer.File,
+	) {
+		return { input, postImage };
+	}
+
+	@Public()
+	@Patch(':id')
+	@ApiOperation({
+		summary: 'Update Post by Id',
+	})
+	@ApiConsumes('multipart/form-data')
+	@UseInterceptors(
+		FileInterceptor('postImage', {
+			storage: storageConfig('post'),
+			fileFilter(req, file, cb) {
+				if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+					req.fileValidationError =
+						'Wrong extension type. Accepted file ext are: jpg|jpeg|png';
+					cb(null, false);
+				} else {
+					const fileSize = parseInt(req.headers['content-length']);
+					if (fileSize > 1024 * 1024 * 5) {
+						req.fileValidationError =
+							'File size is too large. Accepted file size is less than 5MB';
+						cb(null, false);
+					} else {
+						cb(null, true);
+					}
+				}
+			},
+		}),
+	)
+	updatePost(
+		@UploadedFile() postImage: Express.Multer.File,
+		@Body() input: UpdatePostDto,
+		@Param('id', ParseIntPipe) id: number,
+	) {
+		return { id, input, postImage };
+	}
+
+	@Public()
+	@Delete(':id')
+	@ApiOperation({
+		summary: 'Delete Post by Id',
+	})
+	deletePost(@Param('id', ParseIntPipe) id: number) {
+		//TODO: Before delete post, check the related
+		return id;
+	}
+
+	//COMMENTS
+	@Public()
+	@Get(':id/comments')
+	@ApiOperation({
+		summary: 'Get many Comment by post Id',
+	})
+	getManyPostComment(
+		@Param('id', ParseIntPipe) id: number,
+		@Query() filter: DefaultListDto,
+	) {
+		return { id, filter };
+	}
+
+	@Public()
+	@Post(':id/comments')
+	@ApiOperation({
+		summary: 'Create Comment by post Id',
+	})
+	commentPost(
+		@Param('id', ParseIntPipe) id: number,
+		@Body() input: CreateCommentDto,
+	) {
+		return { id, input };
+	}
+}
