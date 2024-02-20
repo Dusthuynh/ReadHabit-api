@@ -11,6 +11,12 @@ export class Comment extends BaseObject {
 	@Column()
 	postId: number;
 
+	@Column({ nullable: true })
+	parentId: number;
+
+	@Column()
+	path: string;
+
 	@Column()
 	createdById: number;
 
@@ -19,4 +25,7 @@ export class Comment extends BaseObject {
 
 	@ManyToOne(() => User, (user: User) => user.comments)
 	createdBy: User;
+
+	@ManyToOne(() => Comment)
+	parent: Comment;
 }

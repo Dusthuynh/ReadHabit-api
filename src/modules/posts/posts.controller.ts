@@ -14,12 +14,12 @@ import {
 import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Public } from '../auth/utils';
 import { GetPostDto } from './dto/get-post.dto';
-import { DefaultListDto } from 'src/shared/dto/default-list-dto';
 import { CreatePostDto } from './dto/create-post.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { storageConfig } from 'helpers/config';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { CreateCommentDto } from '../comments/dto/create-comment.dto';
+import { CreateReaction } from '../reactions/dto/create-reaction.dto';
 
 @Controller('posts')
 @ApiTags('posts')
@@ -123,18 +123,6 @@ export class PostsController {
 
 	//COMMENTS
 	@Public()
-	@Get(':id/comments')
-	@ApiOperation({
-		summary: 'Get many Comment by post Id',
-	})
-	getManyPostComment(
-		@Param('id', ParseIntPipe) id: number,
-		@Query() filter: DefaultListDto,
-	) {
-		return { id, filter };
-	}
-
-	@Public()
 	@Post(':id/comments')
 	@ApiOperation({
 		summary: 'Create Comment by post Id',
@@ -142,6 +130,19 @@ export class PostsController {
 	commentPost(
 		@Param('id', ParseIntPipe) id: number,
 		@Body() input: CreateCommentDto,
+	) {
+		return { id, input };
+	}
+
+	//REACTIONS
+	@Public()
+	@Post(':id/react')
+	@ApiOperation({
+		summary: 'React Post by post Id',
+	})
+	reactPost(
+		@Param('id', ParseIntPipe) id: number,
+		@Body() input: CreateReaction,
 	) {
 		return { id, input };
 	}
