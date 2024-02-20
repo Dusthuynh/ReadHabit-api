@@ -59,6 +59,7 @@ export class CreatePostDto {
 	@ApiProperty({
 		type: 'string',
 		format: 'binary',
+		required: false,
 	})
 	@IsOptional()
 	postImage?: string;

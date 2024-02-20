@@ -67,25 +67,11 @@ export class CategoriesController {
 			},
 		}),
 	)
-	@ApiBody({
-		schema: {
-			type: 'object',
-			properties: {
-				name: { type: 'string', default: 'Technical' },
-				categoryImage: {
-					type: 'string',
-					format: 'binary',
-				},
-			},
-			required: ['name', 'categoryImage'],
-		},
-	})
 	createCategory(
 		@UploadedFile() categoryImage: Express.Multer.File,
 		@Body() input: CreateCategoryDto,
 	) {
-		console.log(categoryImage, input);
-		return input;
+		return { input, categoryImage };
 	}
 
 	@Public()

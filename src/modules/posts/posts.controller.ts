@@ -146,4 +146,16 @@ export class PostsController {
 	) {
 		return { id, input };
 	}
+
+	@Public()
+	@Post(':id/share')
+	@ApiOperation({
+		summary: 'React Post by post Id',
+	})
+	sharePost(
+		@Param('id', ParseIntPipe) id: number,
+		@Body() input: CreateReaction,
+	) {
+		return { id, input };
+	}
 }
