@@ -1,20 +1,39 @@
 import { User } from 'src/modules/users/entities/user.entity';
 import { BaseObject } from 'src/shared/entities/base-object.entity';
-import { NOTIFICATION_STATUS } from 'src/shared/enum/notification.enum';
-import { Column, Entity, ManyToMany, JoinTable } from 'typeorm';
+import {
+	Column,
+	Entity,
+	ManyToOne,
+	OneToMany,
+	PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Notification extends BaseObject {
 	@Column()
-	title: string;
+	message: string;
+
+	@OneToMany(() => NotificationRecipient, (recipient) => recipient.notification)
+	recipients: NotificationRecipient[];
+}
+
+@Entity()
+export class NotificationRecipient {
+	@PrimaryGeneratedColumn()
+	id: number;
 
 	@Column()
-	content: string;
+	notificationId: number;
 
 	@Column()
-	status: NOTIFICATION_STATUS;
+	userId: number;
 
-	@ManyToMany(() => User, (user: User) => user.notifications)
-	@JoinTable({ name: 'user_notification' })
-	users: User[];
+	@Column({ default: false })
+	seen: boolean;
+
+	@ManyToOne(() => User, (user: User) => user.notifications)
+	user: User;
+
+	@ManyToOne(() => Notification, (noti: Notification) => noti.recipients)
+	notification: Notification;
 }

@@ -1,7 +1,7 @@
 import { Bookmark } from 'src/modules/bookmarks/entities/bookmark.entity';
 import { Category } from 'src/modules/categories/entities/category.entity';
 import { Comment } from 'src/modules/comments/entities/comment.entity';
-import { Notification } from 'src/modules/notifications/entities/notification.entity';
+import { NotificationRecipient } from 'src/modules/notifications/entities/notification.entity';
 import { Post } from 'src/modules/posts/entities/post.entity';
 import { Rank } from 'src/modules/ranks/entities/rank.entity';
 import { Reaction } from 'src/modules/reactions/entities/reaction.entity';
@@ -57,11 +57,11 @@ export class User extends BaseObject {
 	@OneToMany(() => Comment, (comment: Comment) => comment.createdBy)
 	comments: Comment[];
 
-	@ManyToMany(
-		() => Notification,
-		(notification: Notification) => notification.users,
+	@OneToMany(
+		() => NotificationRecipient,
+		(noti: NotificationRecipient) => noti.user,
 	)
-	notifications: Notification[];
+	notifications: NotificationRecipient[];
 
 	@OneToMany(() => Rank, (rank: Rank) => rank.owner)
 	ranks: Rank[];
