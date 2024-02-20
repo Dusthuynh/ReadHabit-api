@@ -19,7 +19,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { storageConfig } from 'helpers/config';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { CreateCommentDto } from '../comments/dto/create-comment.dto';
-import { CreateReaction } from '../reactions/dto/create-reaction.dto';
+import { CreateReactionDto } from '../reactions/dto/create-reaction.dto';
+import { SharePostDto } from './dto/share-post.dto';
+import { CreateBookmarkPostDto } from '../bookmark_posts/dto/create_bookmark_post.dto';
 
 @Controller('posts')
 @ApiTags('posts')
@@ -138,24 +140,40 @@ export class PostsController {
 	@Public()
 	@Post(':id/react')
 	@ApiOperation({
-		summary: 'React Post by post Id',
+		summary: 'React post by post Id',
 	})
 	reactPost(
 		@Param('id', ParseIntPipe) id: number,
-		@Body() input: CreateReaction,
+		@Body() input: CreateReactionDto,
 	) {
 		return { id, input };
 	}
 
+	//SHARE POST
 	@Public()
 	@Post(':id/share')
 	@ApiOperation({
-		summary: 'React Post by post Id',
+		summary: 'Share post by post Id',
 	})
 	sharePost(
 		@Param('id', ParseIntPipe) id: number,
-		@Body() input: CreateReaction,
+		@Body() input: SharePostDto,
 	) {
+		//TODO: add request userId
+		return { id, input };
+	}
+
+	//BOOKMARK
+	@Public()
+	@Post(':id/bookmark')
+	@ApiOperation({
+		summary: 'Bookmark Post by post Id',
+	})
+	bookmarkPost(
+		@Param('id', ParseIntPipe) id: number,
+		@Body() input: CreateBookmarkPostDto,
+	) {
+		//TODO: add request userId
 		return { id, input };
 	}
 }

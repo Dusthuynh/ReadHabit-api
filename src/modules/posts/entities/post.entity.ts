@@ -43,7 +43,7 @@ export class Post extends BaseObject {
 	@Column({ type: 'enum', enum: POST_TYPE })
 	type: POST_TYPE;
 
-	@Column()
+	@Column({ nullable: true })
 	readTime: number;
 
 	@Column({ default: 0 })
@@ -56,7 +56,7 @@ export class Post extends BaseObject {
 	totalShare: number;
 
 	// RELATION
-	@Column()
+	@Column({ nullable: true })
 	categoryId: number;
 
 	@Column({ nullable: true })
