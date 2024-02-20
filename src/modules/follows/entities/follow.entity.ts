@@ -8,11 +8,11 @@ export class Follow extends BaseObject {
 	followerId: number;
 
 	@Column()
-	followingId: number;
+	followeeId: number;
 
 	@ManyToOne(() => User)
 	follower: User;
 
 	@ManyToOne(() => User)
-	following: User;
+	followee: User;
 }
