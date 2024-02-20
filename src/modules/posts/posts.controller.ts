@@ -21,7 +21,7 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 import { CreateReactionDto } from '../reactions/dto/create-reaction.dto';
 import { SharePostDto } from './dto/share-post.dto';
-import { CreateBookmarkPostDto } from '../bookmark_posts/dto/create_bookmark_post.dto';
+import { CreateBookmarkPostDto } from '../bookmark_posts/dto/create-bookmark-post.dto';
 
 @Controller('posts')
 @ApiTags('posts')

@@ -23,7 +23,7 @@ import { UpdateContentSourceDto } from './dto/update-content-source.dto';
 @ApiTags('content-sources')
 export class ContentSourcesController {
 	@Public()
-	@Get('')
+	@Get()
 	@ApiOperation({
 		summary: 'Get Many Content source',
 	})
