@@ -1,14 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional } from 'class-validator';
+import { IsString, MinLength, IsOptional } from 'class-validator';
 
-export class UpdateCategoryDto {
-	@ApiProperty({
-		type: 'string',
-		required: false,
-	})
+export class UpdateContentSourceDto {
+	@ApiProperty({ required: false })
 	@IsOptional()
 	@IsString()
-	@ApiProperty()
+	@MinLength(3)
 	name?: string;
 
 	@ApiProperty({
@@ -17,5 +14,5 @@ export class UpdateCategoryDto {
 		required: false,
 	})
 	@IsOptional()
-	categoryImage?: string;
+	contentSourceImage?: string;
 }

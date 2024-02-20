@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString, MinLength } from 'class-validator';
+import { IsString, MinLength, IsOptional } from 'class-validator';
 
-export class CreateCategoryDto {
+export class CreateContentSourceDto {
 	@IsString()
 	@MinLength(3)
-	@ApiProperty({ default: 'Technical' })
+	@ApiProperty({ default: 'Spiderum' })
 	name: string;
 
 	@ApiProperty({
@@ -13,5 +13,5 @@ export class CreateCategoryDto {
 		required: false,
 	})
 	@IsOptional()
-	categoryImage?: string;
+	contentSourceImage?: string;
 }

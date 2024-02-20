@@ -11,7 +11,7 @@ import {
 	UploadedFile,
 	UseInterceptors,
 } from '@nestjs/common';
-import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Public } from '../auth/utils';
 import { DefaultListDto } from 'src/shared/dto/default-list-dto';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -101,18 +101,6 @@ export class CategoriesController {
 			},
 		}),
 	)
-	@ApiBody({
-		schema: {
-			type: 'object',
-			properties: {
-				name: { type: 'string', default: 'Technical' },
-				categoryImage: {
-					type: 'string',
-					format: 'binary',
-				},
-			},
-		},
-	})
 	updateCategoryById(
 		@Param('id', ParseIntPipe) id: number,
 		@UploadedFile()
