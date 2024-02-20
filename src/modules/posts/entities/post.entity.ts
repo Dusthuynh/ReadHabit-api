@@ -2,6 +2,7 @@ import { BookmarkPost } from 'src/modules/bookmark_posts/entities/bookmark_post.
 import { Category } from 'src/modules/categories/entities/category.entity';
 import { Comment } from 'src/modules/comments/entities/comment.entity';
 import { ContentSource } from 'src/modules/content_sources/entities/content_source.entity';
+import { Reaction } from 'src/modules/reactions/entities/reaction.entity';
 import { Tag } from 'src/modules/tags/entities/tag.entities';
 import { User } from 'src/modules/users/entities/user.entity';
 import { BaseObject } from 'src/shared/entities/base-object.entity';
@@ -72,6 +73,9 @@ export class Post extends BaseObject {
 
 	@ManyToOne(() => ContentSource)
 	contentSource: ContentSource;
+
+	@OneToMany(() => Reaction, (reaction: Reaction) => reaction.post)
+	reactions: Reaction[];
 
 	@OneToMany(() => Comment, (comment: Comment) => comment.post)
 	comments: Comment[];

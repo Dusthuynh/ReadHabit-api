@@ -24,6 +24,7 @@ import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { GlobalExceptionFilter } from './exception-filters/global-exception.filter';
 import { AppLoggerMiddleware } from './interceptors/logging.interceptor';
 import { JwtAccessTokenAuthGuard } from './modules/auth/guards/jwt-access-token-auth.guard';
+import { ReactionsModule } from './modules/reactions/reactions.module';
 @Module({
 	imports: [
 		TypeOrmModule.forRootAsync({
@@ -80,6 +81,7 @@ import { JwtAccessTokenAuthGuard } from './modules/auth/guards/jwt-access-token-
 		BookmarksModule,
 		BookmarkPostsModule,
 		EventLogsModule,
+		ReactionsModule,
 	],
 	controllers: [],
 	providers: [

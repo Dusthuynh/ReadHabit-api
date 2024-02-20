@@ -4,6 +4,7 @@ import { Comment } from 'src/modules/comments/entities/comment.entity';
 import { Notification } from 'src/modules/notifications/entities/notification.entity';
 import { Post } from 'src/modules/posts/entities/post.entity';
 import { Rank } from 'src/modules/ranks/entities/rank.entity';
+import { Reaction } from 'src/modules/reactions/entities/reaction.entity';
 import { BaseObject } from 'src/shared/entities/base-object.entity';
 import { Column, Entity, OneToMany, ManyToMany, AfterLoad } from 'typeorm';
 
@@ -49,6 +50,9 @@ export class User extends BaseObject {
 
 	@OneToMany(() => Post, (post: Post) => post.createdBy)
 	posts: Post[];
+
+	@OneToMany(() => Reaction, (reaction: Reaction) => reaction.user)
+	reactions: Reaction[];
 
 	@OneToMany(() => Comment, (comment: Comment) => comment.createdBy)
 	comments: Comment[];
