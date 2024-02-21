@@ -13,7 +13,7 @@ export class EventLog extends BaseObject {
 	@Column()
 	actorId: number;
 
-	@Column()
+	@Column({ nullable: true })
 	postId: number;
 
 	@Column({ nullable: true })
