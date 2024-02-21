@@ -14,6 +14,7 @@ import {
 	Index,
 	OneToMany,
 	ManyToMany,
+	JoinTable,
 } from 'typeorm';
 
 @Entity()
@@ -80,7 +81,8 @@ export class Post extends BaseObject {
 	@OneToMany(() => Comment, (comment: Comment) => comment.post)
 	comments: Comment[];
 
-	@ManyToMany(() => Tag, (tag: Tag) => tag.posts)
+	@ManyToMany(() => Tag)
+	@JoinTable({ name: 'post_tag' })
 	tags: Tag[];
 
 	@OneToMany(
