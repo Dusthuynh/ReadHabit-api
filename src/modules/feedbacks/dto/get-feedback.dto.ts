@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString, Matches } from 'class-validator';
 import { DefaultListDto } from 'src/shared/dto/default-list-dto';
 
 export class GetFeedbackDto extends DefaultListDto {
@@ -10,7 +10,9 @@ export class GetFeedbackDto extends DefaultListDto {
 	})
 	@IsOptional()
 	@IsString()
-	//TODO: hanlde boolean type in service
+	@Matches(/^(true|false)$/i, {
+		message: 'The isLock value must be either true or false',
+	})
 	isCheck?: string;
 
 	@ApiProperty({

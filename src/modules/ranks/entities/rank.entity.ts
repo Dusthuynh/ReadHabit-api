@@ -4,7 +4,7 @@ import { BaseObject } from 'src/shared/entities/base-object.entity';
 import { Column, Entity, ManyToOne, Index } from 'typeorm';
 
 @Entity()
-@Index(['ownerId'])
+@Index(['ownerId', 'isLock'])
 export class Rank extends BaseObject {
 	@Column()
 	rankLevelId: number;
