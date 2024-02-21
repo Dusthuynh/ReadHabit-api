@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -7,6 +7,24 @@ import { appConfig } from './app.config';
 import { BullModule } from '@nestjs/bull';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-store';
+import { PostsModule } from './modules/posts/posts.module';
+import { ContentSourcesModule } from './modules/content_sources/content_sources.module';
+import { CategoriesModule } from './modules/categories/categories.module';
+import { CommentsModule } from './modules/comments/comments.module';
+import { TagsModule } from './modules/tags/tags.module';
+import { FollowsModule } from './modules/follows/follows.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
+import { RanksModule } from './modules/ranks/ranks.module';
+import { RankLevelsModule } from './modules/rank_levels/rank_levels.module';
+import { FeedbackModule } from './modules/feedbacks/feedbacks.module';
+import { BookmarksModule } from './modules/bookmarks/bookmarks.module';
+import { BookmarkPostsModule } from './modules/bookmark_posts/bookmark_posts.module';
+import { EventLogsModule } from './modules/event_logs/event_logs.module';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { GlobalExceptionFilter } from './exception-filters/global-exception.filter';
+import { AppLoggerMiddleware } from './interceptors/logging.interceptor';
+import { JwtAccessTokenAuthGuard } from './modules/auth/guards/jwt-access-token-auth.guard';
+import { ReactionsModule } from './modules/reactions/reactions.module';
 @Module({
 	imports: [
 		TypeOrmModule.forRootAsync({
@@ -50,8 +68,39 @@ import { redisStore } from 'cache-manager-redis-store';
 		}),
 		AuthModule,
 		UsersModule,
+		PostsModule,
+		ContentSourcesModule,
+		CategoriesModule,
+		CommentsModule,
+		TagsModule,
+		FollowsModule,
+		NotificationsModule,
+		RanksModule,
+		RankLevelsModule,
+		FeedbackModule,
+		BookmarksModule,
+		BookmarkPostsModule,
+		EventLogsModule,
+		ReactionsModule,
 	],
 	controllers: [],
-	providers: [],
+	providers: [
+		{
+			provide: APP_GUARD,
+			useClass: JwtAccessTokenAuthGuard,
+		},
+		{
+			provide: APP_FILTER,
+			useClass: GlobalExceptionFilter,
+		},
+	],
 })
-export class AppModule {}
+export class AppModule {
+	configure(consumer: MiddlewareConsumer): void {
+		consumer.apply(AppLoggerMiddleware).forRoutes('*');
+	}
+
+	constructor() {
+		console.log({ appConfig });
+	}
+}
