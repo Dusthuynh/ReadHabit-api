@@ -37,6 +37,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { GetUserDto } from './dto/get-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { AddCategoryDto } from './dto/add-category.dto';
 
 @Controller('users')
 @ApiTags('users')
@@ -188,5 +189,15 @@ export class UsersController {
 		}
 
 		return this.userService.uploadAvatar(user.uid, file.path);
+	}
+
+	//CATEGORIES
+	@Post(':id/categories')
+	@ApiOperation({ summary: "Set user's categories" })
+	addCategories(
+		@Param('id', ParseIntPipe) id: number,
+		@Body() input: AddCategoryDto,
+	) {
+		return { id, input };
 	}
 }

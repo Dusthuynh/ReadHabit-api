@@ -8,9 +8,9 @@ export class CreateNotificationDto {
 
 	@ApiProperty({
 		type: [Number],
-		description: 'Array of userId',
+		description: 'Array of recipientIds',
 	})
 	@IsArray()
 	@ArrayMinSize(1)
-	recipients: number[];
+	recipientIds: number[];
 }

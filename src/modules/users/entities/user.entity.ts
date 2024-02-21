@@ -6,7 +6,14 @@ import { Post } from 'src/modules/posts/entities/post.entity';
 import { Rank } from 'src/modules/ranks/entities/rank.entity';
 import { Reaction } from 'src/modules/reactions/entities/reaction.entity';
 import { BaseObject } from 'src/shared/entities/base-object.entity';
-import { Column, Entity, OneToMany, ManyToMany, AfterLoad } from 'typeorm';
+import {
+	Column,
+	Entity,
+	OneToMany,
+	ManyToMany,
+	AfterLoad,
+	JoinTable,
+} from 'typeorm';
 
 @Entity()
 export class User extends BaseObject {
@@ -45,7 +52,8 @@ export class User extends BaseObject {
 	avatar: string;
 
 	// RELATION
-	@ManyToMany(() => Category, (category: Category) => category.users)
+	@ManyToMany(() => Category)
+	@JoinTable({ name: 'user_category' })
 	categories: Category[];
 
 	@OneToMany(() => Post, (post: Post) => post.createdBy)
