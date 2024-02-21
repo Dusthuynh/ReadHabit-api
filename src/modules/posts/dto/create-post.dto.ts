@@ -1,6 +1,13 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsEnum, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import {
+	IsEnum,
+	IsNumber,
+	IsOptional,
+	IsString,
+	Matches,
+	Min,
+} from 'class-validator';
 import { POST_STATUS, POST_TYPE } from 'src/shared/enum/post.enum';
 
 export class CreatePostDto {
@@ -15,6 +22,19 @@ export class CreatePostDto {
 	@IsNumber()
 	@Min(1)
 	categoryId: number;
+
+	@ApiProperty({
+		required: false,
+		type: [String],
+		description: 'Array of TagIds. Format: ( TagIds: string1,string2 )',
+	})
+	@IsOptional()
+	@IsString()
+	@Matches(/^(\w+,)*\w+$/, {
+		message:
+			'Invalid tagIds format. Please provide a comma-separated list of strings.',
+	})
+	tagIds: string;
 
 	@ApiProperty({ required: false })
 	@IsOptional()
