@@ -22,6 +22,7 @@ import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 import { CreateReactionDto } from '../reactions/dto/create-reaction.dto';
 import { SharePostDto } from './dto/share-post.dto';
 import { CreateBookmarkPostDto } from '../bookmark_posts/dto/create-bookmark-post.dto';
+import { ReviewPostDto } from './dto/review-post.dto';
 
 @Controller('posts')
 @ApiTags('posts')
@@ -76,6 +77,15 @@ export class PostsController {
 		@UploadedFile() postImage: Express.Multer.File,
 	) {
 		return { input, postImage };
+	}
+
+	@Public()
+	@Post(':id/review')
+	reviewPost(
+		@Body() input: ReviewPostDto,
+		@Param('id', ParseIntPipe) id: number,
+	) {
+		return { id, input };
 	}
 
 	@Public()
