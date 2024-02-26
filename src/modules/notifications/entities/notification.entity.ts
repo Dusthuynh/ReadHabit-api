@@ -5,6 +5,7 @@ import {
 	Entity,
 	ManyToOne,
 	OneToMany,
+	OneToOne,
 	PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -13,8 +14,14 @@ export class Notification extends BaseObject {
 	@Column()
 	message: string;
 
+	@Column()
+	ownerId: number;
+
 	@OneToMany(() => NotificationRecipient, (recipient) => recipient.notification)
 	recipients: NotificationRecipient[];
+
+	@OneToOne(() => User)
+	owner: User;
 }
 
 @Entity()
