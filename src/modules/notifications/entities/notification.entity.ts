@@ -14,7 +14,7 @@ export class Notification extends BaseObject {
 	@Column()
 	message: string;
 
-	@Column()
+	@Column({ nullable: true })
 	ownerId: number;
 
 	@OneToMany(() => NotificationRecipient, (recipient) => recipient.notification)
