@@ -4,6 +4,7 @@ import { UsersService } from './users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { BullModule } from '@nestjs/bull';
+import { CategoriesModule } from '../categories/categories.module';
 
 @Module({
 	imports: [
@@ -11,6 +12,7 @@ import { BullModule } from '@nestjs/bull';
 		BullModule.registerQueue({
 			name: 'user_queue',
 		}),
+		CategoriesModule,
 	],
 	controllers: [UsersController],
 	providers: [UsersService],

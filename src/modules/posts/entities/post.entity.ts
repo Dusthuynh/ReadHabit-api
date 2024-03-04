@@ -81,7 +81,7 @@ export class Post extends BaseObject {
 	@OneToMany(() => Comment, (comment: Comment) => comment.post)
 	comments: Comment[];
 
-	@ManyToMany(() => Tag)
+	@ManyToMany(() => Tag, (tag: Tag) => tag.posts)
 	@JoinTable({ name: 'post_tag' })
 	tags: Tag[];
 

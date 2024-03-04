@@ -4,7 +4,7 @@ import { Column, Entity, OneToMany } from 'typeorm';
 
 @Entity()
 export class ContentSource extends BaseObject {
-	@Column()
+	@Column({ unique: true })
 	name: string;
 
 	@Column()

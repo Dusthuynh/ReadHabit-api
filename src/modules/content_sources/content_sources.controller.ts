@@ -11,24 +11,32 @@ import {
 	UploadedFile,
 	UseInterceptors,
 } from '@nestjs/common';
-import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+	ApiBearerAuth,
+	ApiConsumes,
+	ApiOperation,
+	ApiTags,
+} from '@nestjs/swagger';
 import { Public } from '../auth/utils';
 import { DefaultListDto } from 'src/shared/dto/default-list-dto';
 import { CreateContentSourceDto } from './dto/create-content-source.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { storageConfig } from 'helpers/config';
 import { UpdateContentSourceDto } from './dto/update-content-source.dto';
+import { ContentSourcesService } from './content_sources.service';
 
 @Controller('content-sources')
 @ApiTags('content-sources')
 export class ContentSourcesController {
+	constructor(private readonly contentSourceService: ContentSourcesService) {}
+
 	@Public()
 	@Get()
 	@ApiOperation({
 		summary: 'Get Many Content source',
 	})
-	getManyContentSource(@Query() filter: DefaultListDto) {
-		return filter;
+	async getManyContentSource(@Query() filter: DefaultListDto) {
+		return await this.contentSourceService.findManyContentSource(filter);
 	}
 
 	@Public()
@@ -36,11 +44,11 @@ export class ContentSourcesController {
 	@ApiOperation({
 		summary: 'Get Content source By Id',
 	})
-	findContentSourceById(@Param('id', ParseIntPipe) id: number) {
-		return id;
+	async findContentSourceById(@Param('id', ParseIntPipe) id: number) {
+		return await this.contentSourceService.findOne({ id });
 	}
 
-	@Public()
+	@ApiBearerAuth()
 	@Post()
 	@ApiOperation({
 		summary: 'Create Content source',
@@ -67,15 +75,16 @@ export class ContentSourcesController {
 			},
 		}),
 	)
-	createContentSource(
+	async createContentSource(
 		@UploadedFile() contentSourceImage: Express.Multer.File,
 		@Body() input: CreateContentSourceDto,
 	) {
 		//TODO: add request userId
-		return { input, contentSourceImage };
+		input.avatar = contentSourceImage ? contentSourceImage.path : null;
+		return await this.contentSourceService.createContentSource(input);
 	}
 
-	@Public()
+	@ApiBearerAuth()
 	@Patch(':id')
 	@ApiOperation({
 		summary: 'Update Content source By Id',
@@ -102,22 +111,23 @@ export class ContentSourcesController {
 			},
 		}),
 	)
-	updateContentSourceById(
+	async updateContentSourceById(
 		@Param('id', ParseIntPipe) id: number,
 		@UploadedFile()
 		contentSourceImage: Express.Multer.File,
 		@Body() input: UpdateContentSourceDto,
 	) {
-		return { id, contentSourceImage, input };
+		input.avatar = contentSourceImage ? contentSourceImage.path : null;
+		return await this.contentSourceService.updateContentServiceById(id, input);
 	}
 
-	@Public()
+	@ApiBearerAuth()
 	@Delete(':id')
 	@ApiOperation({
 		summary: 'Delete Content source By Id',
 	})
-	deleteContentSource(@Param('id', ParseIntPipe) id: number) {
+	async deleteContentSource(@Param('id', ParseIntPipe) id: number) {
 		//TODO: Before delete category, check the related
-		return id;
+		return await this.contentSourceService.deleteOne({ id });
 	}
 }

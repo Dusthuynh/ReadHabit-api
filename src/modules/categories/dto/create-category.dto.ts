@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString, MinLength } from 'class-validator';
 
 export class CreateCategoryDto {
@@ -14,4 +14,7 @@ export class CreateCategoryDto {
 	})
 	@IsOptional()
 	categoryImage?: string;
+
+	@ApiHideProperty()
+	imageURL?: string;
 }

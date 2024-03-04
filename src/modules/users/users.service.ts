@@ -2,14 +2,17 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { BaseService } from 'src/shared/bases/service.base';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import * as fs from 'fs';
+import { AddCategoryDto } from './dto/add-category.dto';
+import { CategoriesService } from '../categories/categories.service';
 
 @Injectable()
 export class UsersService extends BaseService<User> {
 	constructor(
 		@InjectRepository(User)
 		private userRepository: Repository<User>,
+		private categoryService: CategoriesService,
 	) {
 		super(userRepository);
 	}
@@ -41,6 +44,9 @@ export class UsersService extends BaseService<User> {
 
 	async uploadAvatar(userId: number, filePath: string): Promise<User | null> {
 		const user = await this.userRepository.findOne({ where: { id: userId } });
+		if (!user) {
+			throw new NotFoundException('User not found!');
+		}
 
 		if (user.avatar) {
 			// delete oldFile
@@ -52,6 +58,22 @@ export class UsersService extends BaseService<User> {
 			});
 		}
 		user.avatar = filePath;
+		return await this.userRepository.save(user);
+	}
+
+	async addCategories(userId: number, input: AddCategoryDto) {
+		const user = await this.userRepository.findOne({
+			where: { id: userId },
+			relations: { categories: true },
+		});
+		if (!user) {
+			throw new NotFoundException('User not found!');
+		}
+
+		const categories = await this.categoryService.findAllData({
+			id: In(input.categoryIds),
+		});
+		user.categories = categories;
 		return await this.userRepository.save(user);
 	}
 }

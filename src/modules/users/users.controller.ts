@@ -192,12 +192,13 @@ export class UsersController {
 	}
 
 	//CATEGORIES
+	@Public()
 	@Post(':id/categories')
 	@ApiOperation({ summary: "Set user's categories" })
-	addCategories(
+	async addCategories(
 		@Param('id', ParseIntPipe) id: number,
 		@Body() input: AddCategoryDto,
 	) {
-		return { id, input };
+		return await this.userService.addCategories(id, input);
 	}
 }
