@@ -7,7 +7,7 @@ export class ContentSource extends BaseObject {
 	@Column({ unique: true })
 	name: string;
 
-	@Column()
+	@Column({ nullable: true })
 	avatar: string;
 
 	@OneToMany(() => Post, (post: Post) => post.contentSource)

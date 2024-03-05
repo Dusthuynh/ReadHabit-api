@@ -1,4 +1,5 @@
 import { User } from 'src/modules/users/entities/user.entity';
+import { USER_ROLE } from 'src/shared/enum/user.enum';
 
 type IUser = Partial<User>;
 export const userData: IUser[] = [
@@ -13,6 +14,7 @@ export const userData: IUser[] = [
 		password:
 			'907bb01dbbec472900343c88f06d9a11d26f91c97e1eeeae060580c9e33135b287ed8d57db8b1eef69dcbd318687e184c596d1d99ed2dfa1da54426e30a4ae22.dbf0ff59fe438de00fed495965d0ba8c',
 		avatar: 'files/avatar/dust.admin.jpg',
+		role: USER_ROLE.ADMIN,
 	},
 	{
 		id: 2,
@@ -25,6 +27,7 @@ export const userData: IUser[] = [
 		password:
 			'907bb01dbbec472900343c88f06d9a11d26f91c97e1eeeae060580c9e33135b287ed8d57db8b1eef69dcbd318687e184c596d1d99ed2dfa1da54426e30a4ae22.dbf0ff59fe438de00fed495965d0ba8c',
 		avatar: 'files/avatar/loc.admin.jpg',
+		role: USER_ROLE.ADMIN,
 	},
 	{
 		id: 3,
@@ -37,6 +40,7 @@ export const userData: IUser[] = [
 		password:
 			'907bb01dbbec472900343c88f06d9a11d26f91c97e1eeeae060580c9e33135b287ed8d57db8b1eef69dcbd318687e184c596d1d99ed2dfa1da54426e30a4ae22.dbf0ff59fe438de00fed495965d0ba8c',
 		avatar: 'files/avatar/thaiha.jpg',
+		role: USER_ROLE.MEMBER,
 	},
 	{
 		id: 4,
@@ -49,6 +53,7 @@ export const userData: IUser[] = [
 		password:
 			'907bb01dbbec472900343c88f06d9a11d26f91c97e1eeeae060580c9e33135b287ed8d57db8b1eef69dcbd318687e184c596d1d99ed2dfa1da54426e30a4ae22.dbf0ff59fe438de00fed495965d0ba8c',
 		avatar: 'files/avatar/phuhien.jpg',
+		role: USER_ROLE.MEMBER,
 	},
 	{
 		id: 5,
@@ -62,6 +67,7 @@ export const userData: IUser[] = [
 		password:
 			'907bb01dbbec472900343c88f06d9a11d26f91c97e1eeeae060580c9e33135b287ed8d57db8b1eef69dcbd318687e184c596d1d99ed2dfa1da54426e30a4ae22.dbf0ff59fe438de00fed495965d0ba8c',
 		avatar: 'files/avatar/hongan.jpg',
+		role: USER_ROLE.MEMBER,
 	},
 	{
 		id: 6,
@@ -69,10 +75,11 @@ export const userData: IUser[] = [
 		birthday: new Date(),
 		phoneNumber: '0853674789',
 		firstName: 'Phú',
-		lastName: 'Nguyễn Minh',
+		lastName: 'Triệu Minh',
 		username: 'phuminh',
 		password:
 			'907bb01dbbec472900343c88f06d9a11d26f91c97e1eeeae060580c9e33135b287ed8d57db8b1eef69dcbd318687e184c596d1d99ed2dfa1da54426e30a4ae22.dbf0ff59fe438de00fed495965d0ba8c',
 		avatar: 'files/avatar/phuminh.jpg',
+		role: USER_ROLE.MEMBER,
 	},
 ];

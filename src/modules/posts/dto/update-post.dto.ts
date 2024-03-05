@@ -14,6 +14,16 @@ export class UpdatePostDto {
 	@Min(1)
 	categoryId?: number;
 
+	@ApiProperty({
+		required: false,
+		type: String,
+		description: 'Array of Tags. Format: ( Tags: string1,string2 )',
+		default: 'Backend,Nestjs,Kiến thức nền tảng',
+	})
+	@IsOptional()
+	@IsString()
+	tags: string;
+
 	@ApiProperty({ required: false })
 	@IsOptional()
 	@Type(() => Number)

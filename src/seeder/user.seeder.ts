@@ -28,7 +28,6 @@ export class UserSeeder implements Seeder {
 		users[5].categories = [categories[14], categories[16], categories[18]];
 
 		const data = await this.userRepository.save(users);
-		console.log(data);
 	}
 
 	async drop(): Promise<any> {

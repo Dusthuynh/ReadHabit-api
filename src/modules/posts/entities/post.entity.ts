@@ -23,16 +23,16 @@ export class Post extends BaseObject {
 	@Column()
 	title: string;
 
-	@Column()
+	@Column({ nullable: true })
 	content: string;
 
-	@Column({ default: 0 })
+	@Column({ nullable: true })
 	sharePostId: number;
 
 	@Column({ nullable: true })
 	originalPostURL: string;
 
-	@Column()
+	@Column({ nullable: true })
 	publishDate: Date;
 
 	@Column({ nullable: true })
@@ -90,4 +90,10 @@ export class Post extends BaseObject {
 		(bookmarkPost: BookmarkPost) => bookmarkPost.post,
 	)
 	bookmarkPosts: BookmarkPost[];
+
+	@OneToMany(() => Post, (post) => post.sharePost)
+	sharedByPosts: Post[];
+
+	@ManyToOne(() => Post, (post) => post.sharedByPosts)
+	sharePost: Post;
 }

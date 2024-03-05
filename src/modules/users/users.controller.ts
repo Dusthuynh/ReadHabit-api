@@ -95,7 +95,7 @@ export class UsersController {
 		return this.userService.findAll(filter);
 	}
 
-	@Public()
+	@ApiBearerAuth()
 	@Post()
 	@ApiOperation({
 		summary: 'Create One User',
@@ -127,7 +127,7 @@ export class UsersController {
 		return this.userService.createOne(input);
 	}
 
-	@Public()
+	@ApiBearerAuth()
 	@Patch(':id')
 	@ApiParam({
 		name: 'id',
@@ -142,7 +142,7 @@ export class UsersController {
 		return this.userService.updateOne({ id }, updateUserDto);
 	}
 
-	@Public()
+	@ApiBearerAuth()
 	@Delete(':id')
 	@ApiParam({ name: 'id', type: Number, description: 'User ID' })
 	deleteUser(@Param('id', ParseIntPipe) id: number) {
@@ -150,6 +150,7 @@ export class UsersController {
 		return this.userService.deleteOne({ id });
 	}
 
+	@ApiBearerAuth()
 	@Post('upload-avatar')
 	@ApiBearerAuth()
 	@ApiConsumes('multipart/form-data')
@@ -192,7 +193,7 @@ export class UsersController {
 	}
 
 	//CATEGORIES
-	@Public()
+	@ApiBearerAuth()
 	@Post(':id/categories')
 	@ApiOperation({ summary: "Set user's categories" })
 	async addCategories(

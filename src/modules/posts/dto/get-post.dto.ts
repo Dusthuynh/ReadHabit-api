@@ -16,6 +16,16 @@ export class GetPostDto extends DefaultListDto {
 	sharePostId?: number;
 
 	@ApiProperty({
+		required: false,
+		type: Number,
+	})
+	@IsOptional()
+	@Type(() => Number)
+	@IsNumber()
+	@Min(1)
+	originalPostURL?: number;
+
+	@ApiProperty({
 		isArray: true,
 		required: false,
 		enum: POST_STATUS,

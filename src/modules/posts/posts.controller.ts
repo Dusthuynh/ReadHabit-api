@@ -11,7 +11,12 @@ import {
 	UploadedFile,
 	UseInterceptors,
 } from '@nestjs/common';
-import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+	ApiBearerAuth,
+	ApiConsumes,
+	ApiOperation,
+	ApiTags,
+} from '@nestjs/swagger';
 import { Public } from '../auth/utils';
 import { GetPostDto } from './dto/get-post.dto';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -23,17 +28,21 @@ import { CreateReactionDto } from '../reactions/dto/create-reaction.dto';
 import { SharePostDto } from './dto/share-post.dto';
 import { CreateBookmarkPostDto } from '../bookmark_posts/dto/create-bookmark-post.dto';
 import { ReviewPostDto } from './dto/review-post.dto';
+import { PostsService } from './posts.service';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
 @Controller('posts')
 @ApiTags('posts')
 export class PostsController {
+	constructor(private readonly postService: PostsService) {}
+
 	@Public()
 	@Get('')
 	@ApiOperation({
 		summary: 'Get many Post',
 	})
-	getManyPost(@Query() filter: GetPostDto) {
-		return filter;
+	async getManyPost(@Query() filter: GetPostDto) {
+		return await this.postService.getManyPost(filter);
 	}
 
 	@Public()
@@ -41,11 +50,20 @@ export class PostsController {
 	@ApiOperation({
 		summary: 'Get Post by Id',
 	})
-	findPostById(@Param('id', ParseIntPipe) id: number) {
-		return id;
+	async findPostById(@Param('id', ParseIntPipe) id: number) {
+		return await this.postService.findOneWithRelation({
+			where: { id },
+			relations: {
+				comments: true,
+				tags: true,
+				contentSource: true,
+				category: true,
+				createdBy: true,
+			},
+		});
 	}
 
-	@Public()
+	@ApiBearerAuth()
 	@Post()
 	@ApiOperation({
 		summary: 'Create Post',
@@ -72,23 +90,26 @@ export class PostsController {
 			},
 		}),
 	)
-	createPost(
+	async createPost(
 		@Body() input: CreatePostDto,
 		@UploadedFile() postImage: Express.Multer.File,
+		@CurrentUser('uid') userId: number,
 	) {
-		return { input, postImage };
+		input.imageURL = postImage ? postImage.path : null;
+		return await this.postService.createPost(userId, input);
 	}
 
-	@Public()
+	@ApiBearerAuth()
 	@Post(':id/review')
-	reviewPost(
+	async reviewPost(
 		@Body() input: ReviewPostDto,
 		@Param('id', ParseIntPipe) id: number,
+		@CurrentUser('uid') userId: number,
 	) {
-		return { id, input };
+		return await this.postService.reviewPost(id, userId, input);
 	}
 
-	@Public()
+	@ApiBearerAuth()
 	@Patch(':id')
 	@ApiOperation({
 		summary: 'Update Post by Id',
@@ -115,22 +136,27 @@ export class PostsController {
 			},
 		}),
 	)
-	updatePost(
+	async updatePost(
 		@UploadedFile() postImage: Express.Multer.File,
 		@Body() input: UpdatePostDto,
 		@Param('id', ParseIntPipe) id: number,
+		@CurrentUser('uid') userId: number,
 	) {
-		return { id, input, postImage };
+		input.imageURL = postImage ? postImage.path : null;
+		return await this.postService.updatePost(id, userId, input);
 	}
 
-	@Public()
+	@ApiBearerAuth()
 	@Delete(':id')
 	@ApiOperation({
 		summary: 'Delete Post by Id',
 	})
-	deletePost(@Param('id', ParseIntPipe) id: number) {
+	async deletePost(
+		@Param('id', ParseIntPipe) id: number,
+		@CurrentUser('uid') userId: number,
+	) {
 		//TODO: Before delete post, check the related
-		return id;
+		return await this.postService.deletePost(id, userId);
 	}
 
 	//COMMENTS
@@ -147,30 +173,33 @@ export class PostsController {
 	}
 
 	//REACTIONS
-	@Public()
+	@ApiBearerAuth()
 	@Post(':id/react')
 	@ApiOperation({
 		summary: 'React post by post Id',
 	})
-	reactPost(
+	async reactPost(
 		@Param('id', ParseIntPipe) id: number,
 		@Body() input: CreateReactionDto,
+		@CurrentUser('uid') userId: number,
 	) {
-		return { id, input };
+		input.userId = userId;
+		input.postId = id;
+		return await this.postService.reactPost(input);
 	}
 
 	//SHARE POST
-	@Public()
+	@ApiBearerAuth()
 	@Post(':id/share')
 	@ApiOperation({
 		summary: 'Share post by post Id',
 	})
-	sharePost(
+	async sharePost(
 		@Param('id', ParseIntPipe) id: number,
 		@Body() input: SharePostDto,
+		@CurrentUser('uid') userId: number,
 	) {
-		//TODO: add request userId
-		return { id, input };
+		return await this.postService.sharePost(id, userId, input);
 	}
 
 	//BOOKMARK

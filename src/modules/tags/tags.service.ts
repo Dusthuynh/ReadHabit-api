@@ -70,9 +70,6 @@ export class TagsService extends BaseService<Tag> {
 				categoryId: category.id,
 			},
 		});
-		if (existingTags.length == input.tags.length) {
-			throw new BadRequestException('All requested tags already exist.');
-		}
 
 		const newTags: Tag[] = [];
 		for (const tagName of input.tags) {

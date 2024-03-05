@@ -291,4 +291,18 @@ export abstract class BaseService<T> {
 			throw new BadRequestException(err);
 		}
 	}
+
+	async hardDeleteOne(
+		criteria: number | FindOptionsWhere<T>,
+	): Promise<{ success: boolean }> {
+		try {
+			const data = await this._repository.delete(criteria);
+			if (data.affected === 1) {
+				return { success: true };
+			}
+			throw new BadRequestException('Delete failed!');
+		} catch (err) {
+			throw new BadRequestException(err);
+		}
+	}
 }
