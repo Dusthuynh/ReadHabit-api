@@ -156,6 +156,15 @@ export class PostsService extends BaseService<Post> {
 			);
 		}
 
+		//NOTE: update INTERNAL_SHARE POST
+		if (post.type === POST_TYPE.INTERNAL_SHARE) {
+			if (!input.title) {
+				throw new BadRequestException('The edited content must a title field');
+			}
+			post.title = input.title;
+			return await this.postRepository.save(post);
+		}
+
 		if (data.status) {
 			if (
 				data.status !== POST_STATUS.CREATED &&
