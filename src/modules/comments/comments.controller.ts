@@ -8,21 +8,25 @@ import {
 	Patch,
 	Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Public } from '../auth/utils';
 import { GetCommentDto } from './dto/get-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { CommentsService } from './comments.service';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
 @Controller('comments')
 @ApiTags('comments')
 export class CommentsController {
+	constructor(private readonly commentService: CommentsService) {}
+
 	@Public()
 	@Get()
 	@ApiOperation({
 		summary: 'Get many Comment',
 	})
-	getManyComment(@Query() filter: GetCommentDto) {
-		return filter;
+	async getManyComment(@Query() filter: GetCommentDto) {
+		return await this.commentService.getManyComment(filter);
 	}
 
 	@Public()
@@ -30,28 +34,35 @@ export class CommentsController {
 	@ApiOperation({
 		summary: 'Get comment by Id',
 	})
-	findCommentById(@Param('id', ParseIntPipe) id: number) {
-		return id;
+	async findCommentById(@Param('id', ParseIntPipe) id: number) {
+		return await this.commentService.findOneWithRelation({
+			where: { id },
+			relations: { post: true, createdBy: true },
+		});
 	}
 
-	@Public()
+	@ApiBearerAuth()
 	@Patch(':id')
 	@ApiOperation({
 		summary: 'Update comment by Id',
 	})
-	updateComment(
+	async updateComment(
 		@Param('id', ParseIntPipe) id: number,
+		@CurrentUser('uid') userId: number,
 		@Body() input: UpdateCommentDto,
 	) {
-		return { id, input };
+		return await this.commentService.updateComment(id, userId, input);
 	}
 
-	@Public()
+	@ApiBearerAuth()
 	@Delete(':id')
 	@ApiOperation({
 		summary: 'Delete comment by Id',
 	})
-	deleteComment(@Param('id', ParseIntPipe) id: number) {
-		return id;
+	async deleteComment(
+		@Param('id', ParseIntPipe) id: number,
+		@CurrentUser('uid') userId: number,
+	) {
+		return await this.commentService.deleteComment(id, userId);
 	}
 }

@@ -7,6 +7,7 @@ import { TagsModule } from '../tags/tags.module';
 import { UsersModule } from '../users/users.module';
 import { ReactionsModule } from '../reactions/reactions.module';
 import { PostSubscriber } from './posts.subscriber';
+import { CommentsModule } from '../comments/comments.module';
 
 @Module({
 	imports: [
@@ -14,6 +15,7 @@ import { PostSubscriber } from './posts.subscriber';
 		TagsModule,
 		UsersModule,
 		ReactionsModule,
+		CommentsModule,
 	],
 	controllers: [PostsController],
 	providers: [PostsService, PostSubscriber],

@@ -160,16 +160,17 @@ export class PostsController {
 	}
 
 	//COMMENTS
-	@Public()
+	@ApiBearerAuth()
 	@Post(':id/comments')
 	@ApiOperation({
 		summary: 'Create Comment by post Id',
 	})
-	commentPost(
+	async commentPost(
 		@Param('id', ParseIntPipe) id: number,
+		@CurrentUser('uid') userId: number,
 		@Body() input: CreateCommentDto,
 	) {
-		return { id, input };
+		return await this.postService.commentPost(id, userId, input);
 	}
 
 	//REACTIONS

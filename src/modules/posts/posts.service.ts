@@ -16,6 +16,8 @@ import { ReviewPostDto } from './dto/review-post.dto';
 import { STATUS_USER_REVIEW } from 'src/shared/enum/review.enum';
 import { USER_ROLE } from 'src/shared/enum/user.enum';
 import { SharePostDto } from './dto/share-post.dto';
+import { CreateCommentDto } from '../comments/dto/create-comment.dto';
+import { CommentsService } from '../comments/comments.service';
 
 @Injectable()
 export class PostsService extends BaseService<Post> {
@@ -25,6 +27,7 @@ export class PostsService extends BaseService<Post> {
 		private tagService: TagsService,
 		private userService: UsersService,
 		private reactionService: ReactionsService,
+		private commentservice: CommentsService,
 	) {
 		super(postRepository);
 	}
@@ -306,5 +309,13 @@ export class PostsService extends BaseService<Post> {
 		await this.postRepository.save(post);
 
 		return sharedPost;
+	}
+
+	async commentPost(postId: number, userId: number, input: CreateCommentDto) {
+		const post = await this.postRepository.findOne({ where: { id: postId } });
+		if (!post) {
+			throw new BadRequestException('Post not found');
+		}
+		return await this.commentservice.createComment(postId, userId, input);
 	}
 }
