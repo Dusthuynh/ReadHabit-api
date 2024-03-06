@@ -204,16 +204,16 @@ export class PostsController {
 	}
 
 	//BOOKMARK
-	@Public()
+	@ApiBearerAuth()
 	@Post(':id/bookmark')
 	@ApiOperation({
 		summary: 'Bookmark Post by post Id',
 	})
-	bookmarkPost(
+	async createBookmarkPost(
 		@Param('id', ParseIntPipe) id: number,
+		@CurrentUser('uid') userId: number,
 		@Body() input: CreateBookmarkPostDto,
 	) {
-		//TODO: add request userId
-		return { id, input };
+		return await this.postService.createBookmarkPost(id, userId, input);
 	}
 }

@@ -18,6 +18,8 @@ import { USER_ROLE } from 'src/shared/enum/user.enum';
 import { SharePostDto } from './dto/share-post.dto';
 import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 import { CommentsService } from '../comments/comments.service';
+import { CreateBookmarkPostDto } from '../bookmark_posts/dto/create-bookmark-post.dto';
+import { BookmarksService } from '../bookmarks/bookmarks.service';
 
 @Injectable()
 export class PostsService extends BaseService<Post> {
@@ -28,6 +30,7 @@ export class PostsService extends BaseService<Post> {
 		private userService: UsersService,
 		private reactionService: ReactionsService,
 		private commentservice: CommentsService,
+		private bookmarkService: BookmarksService,
 	) {
 		super(postRepository);
 	}
@@ -317,5 +320,18 @@ export class PostsService extends BaseService<Post> {
 			throw new BadRequestException('Post not found');
 		}
 		return await this.commentservice.createComment(postId, userId, input);
+	}
+
+	async createBookmarkPost(
+		postId: number,
+		userId: number,
+		input: CreateBookmarkPostDto,
+	) {
+		const post = await this.postRepository.findOne({ where: { id: postId } });
+		if (!post) {
+			throw new BadRequestException('Post not found');
+		}
+		input.postId = postId;
+		return await this.bookmarkService.createBookmarkPost(userId, input);
 	}
 }

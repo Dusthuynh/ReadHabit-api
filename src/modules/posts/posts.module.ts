@@ -8,6 +8,7 @@ import { UsersModule } from '../users/users.module';
 import { ReactionsModule } from '../reactions/reactions.module';
 import { PostSubscriber } from './posts.subscriber';
 import { CommentsModule } from '../comments/comments.module';
+import { BookmarksModule } from '../bookmarks/bookmarks.module';
 
 @Module({
 	imports: [
@@ -16,6 +17,7 @@ import { CommentsModule } from '../comments/comments.module';
 		UsersModule,
 		ReactionsModule,
 		CommentsModule,
+		BookmarksModule,
 	],
 	controllers: [PostsController],
 	providers: [PostsService, PostSubscriber],
