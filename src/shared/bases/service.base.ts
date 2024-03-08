@@ -280,6 +280,7 @@ export abstract class BaseService<T> {
 	 * @param entities
 	 * @returns
 	 */
+
 	async removeMany(entities: DeepPartial<T>[]) {
 		try {
 			const res = await this._repository.softRemove(entities);

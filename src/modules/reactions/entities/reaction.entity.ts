@@ -1,8 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { Post } from 'src/modules/posts/entities/post.entity';
 import { User } from 'src/modules/users/entities/user.entity';
 import { REACT_TYPE } from 'src/shared/enum/react.enum';
-import { Column, CreateDateColumn, Entity, ManyToOne } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, ManyToOne } from 'typeorm';
 
 @Entity()
 export class Reaction {

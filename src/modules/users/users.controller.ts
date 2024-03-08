@@ -135,11 +135,13 @@ export class UsersController {
 		description: 'User ID',
 		example: 1,
 	})
-	updateUser(
+	async updateUser(
 		@Param('id', ParseIntPipe) id: number,
 		@Body() updateUserDto: UpdateUserDto,
+		@CurrentUser() user: CurrentUserPayload,
 	) {
-		return this.userService.updateOne({ id }, updateUserDto);
+		return await this.userService.updateUser(id, user, updateUserDto);
+		// return this.userService.updateOne({ id }, updateUserDto);
 	}
 
 	@ApiBearerAuth()

@@ -10,6 +10,7 @@ import { EventEmitter } from 'events';
 import { CreateBookmarkPostDto } from '../bookmark_posts/dto/create-bookmark-post.dto';
 import { BookmarkPostsService } from '../bookmark_posts/bookmark_posts.service';
 import { UpdateBookmarkPostPositionDto } from '../bookmark_posts/dto/update-boomark-post-position.dto';
+import { Post } from '../posts/entities/post.entity';
 export const bookmarkEmitter = new EventEmitter();
 @Injectable()
 export class BookmarksService extends BaseService<Bookmark> {
@@ -41,7 +42,7 @@ export class BookmarksService extends BaseService<Bookmark> {
 				//NOTE: limit 100 rows
 				take: limit ? (limit <= 100 ? limit : 100) : 10,
 				skip: offset ? offset : 0,
-				relations: { bookmarkPosts: { post: true } },
+				relations: { bookmarkPosts: { createdBy: true } },
 			}),
 		]);
 
@@ -60,7 +61,7 @@ export class BookmarksService extends BaseService<Bookmark> {
 			this.bookmarkRepository.find({
 				where: { ownerId: userId },
 				order: { position: 'ASC' },
-				relations: { bookmarkPosts: true },
+				relations: { bookmarkPosts: { createdBy: true } },
 			}),
 		]);
 
@@ -150,13 +151,17 @@ export class BookmarksService extends BaseService<Bookmark> {
 		}
 	}
 
-	async createBookmarkPost(userId: number, input: CreateBookmarkPostDto) {
+	async createBookmarkPost(
+		userId: number,
+		input: CreateBookmarkPostDto,
+		post: Post,
+	) {
 		const bookmark = await this.findOne({ id: input.bookmarkId });
 		if (bookmark.ownerId !== userId) {
 			throw new BadRequestException('No permission to create bookmarked post.');
 		}
 
-		return await this.bookmarkPostService.createBookmarkPost(input);
+		return await this.bookmarkPostService.createBookmarkPost(input, post);
 	}
 
 	async updateBookmarkPostPosition(

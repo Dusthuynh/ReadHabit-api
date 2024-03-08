@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateBookmarkPostDto } from './dto/create-bookmark-post.dto';
 import { UpdateBookmarkPostPositionDto } from './dto/update-boomark-post-position.dto';
+import { Post } from '../posts/entities/post.entity';
 
 @Injectable()
 export class BookmarkPostsService extends BaseService<BookmarkPost> {
@@ -15,7 +16,7 @@ export class BookmarkPostsService extends BaseService<BookmarkPost> {
 		super(bookmarkPostRepository);
 	}
 
-	async createBookmarkPost(input: CreateBookmarkPostDto) {
+	async createBookmarkPost(input: CreateBookmarkPostDto, post: Post) {
 		const itemExists = await this.bookmarkPostRepository.findOne({
 			where: { bookmarkId: input.bookmarkId, postId: input.postId },
 		});
@@ -32,7 +33,12 @@ export class BookmarkPostsService extends BaseService<BookmarkPost> {
 		)[0];
 		input.position = maxPositionBP ? maxPositionBP.position + 1 : 0;
 
-		const newBookmarkPost = this.bookmarkPostRepository.create(input);
+		const newBookmarkPost = this.bookmarkPostRepository.create({
+			...input,
+			title: post.title,
+			imageURL: post.imageURL,
+			createdById: post.createdById,
+		});
 		return await this.bookmarkPostRepository.save(newBookmarkPost);
 	}
 

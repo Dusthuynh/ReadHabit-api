@@ -6,6 +6,7 @@ import { ILike, Repository } from 'typeorm';
 import { DefaultListDto } from 'src/shared/dto/default-list-dto';
 import { CreateContentSourceDto } from './dto/create-content-source.dto';
 import { UpdateContentSourceDto } from './dto/update-content-source.dto';
+import { deleteFile } from 'helpers/config';
 
 @Injectable()
 export class ContentSourcesService extends BaseService<ContentSource> {
@@ -64,6 +65,7 @@ export class ContentSourcesService extends BaseService<ContentSource> {
 		const data = await this.findOne({ id });
 		const { name, avatar } = input;
 		if (avatar) {
+			deleteFile(data.avatar);
 			data.avatar = avatar;
 		}
 		if (name) {

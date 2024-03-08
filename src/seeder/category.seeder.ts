@@ -1,7 +1,5 @@
-import { faker } from '@faker-js/faker';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
 import { Seeder } from 'nestjs-seeder';
 import { Category } from 'src/modules/categories/entities/category.entity';
 import { Repository } from 'typeorm';

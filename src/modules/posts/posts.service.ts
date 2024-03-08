@@ -20,6 +20,7 @@ import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 import { CommentsService } from '../comments/comments.service';
 import { CreateBookmarkPostDto } from '../bookmark_posts/dto/create-bookmark-post.dto';
 import { BookmarksService } from '../bookmarks/bookmarks.service';
+import { deleteFile } from 'helpers/config';
 
 @Injectable()
 export class PostsService extends BaseService<Post> {
@@ -52,6 +53,10 @@ export class PostsService extends BaseService<Post> {
 
 		if (filter.createdById) {
 			where['createdById'] = filter.createdById;
+		}
+
+		if (filter.tagId) {
+			where['tags'] = { id: filter.tagId };
 		}
 
 		if (filter.status) {
@@ -96,13 +101,14 @@ export class PostsService extends BaseService<Post> {
 				order,
 				take: limit ? (limit <= 100 ? limit : 100) : 10,
 				skip: offset ? offset : 0,
-				relations: [
-					'comments',
-					'tags',
-					'contentSource',
-					'category',
-					'createdBy',
-				],
+				// relations: [
+				// 	'tags',
+				// 	'contentSource',
+				// 	'category',
+				// 	'createdBy',
+				// 	'sharedByPosts',
+				// 	'sharePost',
+				// ],
 			}),
 		]);
 
@@ -150,7 +156,7 @@ export class PostsService extends BaseService<Post> {
 	}
 
 	async updatePost(postId: number, userId: number, input: UpdatePostDto) {
-		const { postImage, tags, categoryId, ...data } = input;
+		const { postImage, tags, categoryId, title, imageURL, ...data } = input;
 
 		const post = await this.postRepository.findOne({ where: { id: postId } });
 		const user = await this.userService.findOne({ id: userId });
@@ -205,6 +211,16 @@ export class PostsService extends BaseService<Post> {
 			await this.postRepository.save(post);
 		}
 
+		if (title) {
+			post.title = title;
+			await this.postRepository.save(post);
+		}
+		if (imageURL) {
+			deleteFile(post.imageURL);
+			post.imageURL = imageURL;
+			await this.postRepository.save(post);
+		}
+
 		const res = await this.updateOne({ id: postId }, data);
 		return res;
 	}
@@ -220,7 +236,7 @@ export class PostsService extends BaseService<Post> {
 			);
 		}
 
-		return await this.deleteOne({ id: postId });
+		return await this.postRepository.softRemove(post);
 	}
 
 	async reactPost(input: CreateReactionDto) {
@@ -332,6 +348,6 @@ export class PostsService extends BaseService<Post> {
 			throw new BadRequestException('Post not found');
 		}
 		input.postId = postId;
-		return await this.bookmarkService.createBookmarkPost(userId, input);
+		return await this.bookmarkService.createBookmarkPost(userId, input, post);
 	}
 }

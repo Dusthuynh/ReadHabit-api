@@ -18,7 +18,6 @@ import {
 } from 'typeorm';
 
 @Entity()
-@Index(['createdById', 'contentSourceId'])
 export class Post extends BaseObject {
 	@Column()
 	title: string;
@@ -38,7 +37,7 @@ export class Post extends BaseObject {
 	@Column({ nullable: true })
 	imageURL: string;
 
-	@Column({ type: 'enum', enum: POST_STATUS })
+	@Column({ type: 'enum', enum: POST_STATUS, default: POST_STATUS.CREATED })
 	status: POST_STATUS;
 
 	@Column({ type: 'enum', enum: POST_TYPE })

@@ -59,10 +59,13 @@ export class GetPostDto extends DefaultListDto {
 
 	@ApiProperty({
 		required: false,
-		type: String,
+		type: Number,
 	})
 	@IsOptional()
-	tagId?: string;
+	@Type(() => Number)
+	@IsNumber()
+	@Min(1)
+	tagId?: number;
 
 	@ApiProperty({
 		required: false,

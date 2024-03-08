@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+	ForbiddenException,
+	Injectable,
+	NotFoundException,
+} from '@nestjs/common';
 import { BaseService } from 'src/shared/bases/service.base';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,6 +10,10 @@ import { In, Repository } from 'typeorm';
 import * as fs from 'fs';
 import { AddCategoryDto } from './dto/add-category.dto';
 import { CategoriesService } from '../categories/categories.service';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { CurrentUserPayload } from 'src/shared/interfaces/current-user.interface';
+import { USER_ROLE } from 'src/shared/enum/user.enum';
+import { deleteFile } from 'helpers/config';
 
 @Injectable()
 export class UsersService extends BaseService<User> {
@@ -42,6 +50,24 @@ export class UsersService extends BaseService<User> {
 		return data;
 	}
 
+	async updateUser(
+		userId: number,
+		userRequest: CurrentUserPayload,
+		updateUserDto: UpdateUserDto,
+	) {
+		if (userRequest.uid !== userId && userRequest.role !== USER_ROLE.ADMIN) {
+			throw new ForbiddenException(
+				'Do not have permission to update this user',
+			);
+		}
+		if (updateUserDto.role && userRequest.role !== USER_ROLE.ADMIN) {
+			throw new ForbiddenException(
+				'Do not have permission to update user role',
+			);
+		}
+		return this.updateOne({ id: userId }, updateUserDto);
+	}
+
 	async uploadAvatar(userId: number, filePath: string): Promise<User | null> {
 		const user = await this.userRepository.findOne({ where: { id: userId } });
 		if (!user) {
@@ -49,13 +75,8 @@ export class UsersService extends BaseService<User> {
 		}
 
 		if (user.avatar) {
-			// delete oldFile
-			const oldFilePath = user.avatar;
-			fs.unlink(oldFilePath, (err) => {
-				if (err) {
-					console.error('Error while deleting the file:', err);
-				}
-			});
+			//NOTE: delete oldFile
+			deleteFile(user.avatar);
 		}
 		user.avatar = filePath;
 		return await this.userRepository.save(user);

@@ -1,7 +1,9 @@
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	Delete,
+	ForbiddenException,
 	Get,
 	Param,
 	ParseIntPipe,
@@ -21,9 +23,12 @@ import { Public } from '../auth/utils';
 import { DefaultListDto } from 'src/shared/dto/default-list-dto';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { storageConfig } from 'helpers/config';
+import { deleteFile, storageConfig } from 'helpers/config';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CategoriesService } from './categories.service';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { CurrentUserPayload } from 'src/shared/interfaces/current-user.interface';
+import { USER_ROLE } from 'src/shared/enum/user.enum';
 
 @Controller('categories')
 @ApiTags('categories')
@@ -125,8 +130,15 @@ export class CategoriesController {
 	@ApiOperation({
 		summary: 'Delete Category By Id',
 	})
-	async deleteCategory(@Param('id', ParseIntPipe) id: number) {
-		//TODO: Before delete category, check the related
+	async deleteCategory(
+		@Param('id', ParseIntPipe) id: number,
+		@CurrentUser() user: CurrentUserPayload,
+	) {
+		if (user.role !== USER_ROLE.ADMIN) {
+			throw new ForbiddenException(
+				'Do not have permission to delete this category',
+			);
+		}
 		return await this.categoryService.deleteOne({ id });
 	}
 }

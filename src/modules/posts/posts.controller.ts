@@ -54,11 +54,14 @@ export class PostsController {
 		return await this.postService.findOneWithRelation({
 			where: { id },
 			relations: {
-				comments: true,
 				tags: true,
 				contentSource: true,
 				category: true,
 				createdBy: true,
+				sharePost: true,
+				sharedByPosts: true,
+				comments: true,
+				reactions: true,
 			},
 		});
 	}
@@ -155,7 +158,6 @@ export class PostsController {
 		@Param('id', ParseIntPipe) id: number,
 		@CurrentUser('uid') userId: number,
 	) {
-		//TODO: Before delete post, check the related
 		return await this.postService.deletePost(id, userId);
 	}
 

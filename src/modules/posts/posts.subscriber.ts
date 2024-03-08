@@ -3,10 +3,13 @@ import {
 	EntitySubscriberInterface,
 	EventSubscriber,
 	LoadEvent,
+	SoftRemoveEvent,
+	UpdateEvent,
 } from 'typeorm';
 import { Post } from './entities/post.entity';
 import { Reaction } from '../reactions/entities/reaction.entity';
 import { REACT_TYPE } from 'src/shared/enum/react.enum';
+import { BookmarkPost } from '../bookmark_posts/entities/bookmark_post.entity';
 
 @EventSubscriber()
 export class PostSubscriber implements EntitySubscriberInterface<Post> {
@@ -22,22 +25,50 @@ export class PostSubscriber implements EntitySubscriberInterface<Post> {
 		entity: Post,
 		event?: LoadEvent<Post>,
 	): Promise<Promise<void | Promise<any>>> {
+		const postId = entity.id;
+		const reactionRepository = event.connection.getRepository(Reaction);
+		const postRepository = event.connection.getRepository(Post);
+
+		const [totalLike, totalDislike, totalShare] = await Promise.all([
+			reactionRepository.count({ where: { postId, type: REACT_TYPE.LIKE } }),
+			reactionRepository.count({ where: { postId, type: REACT_TYPE.DISLIKE } }),
+			postRepository.count({ where: { sharePostId: postId } }),
+		]);
+
+		entity.totalLike = totalLike || 0;
+		entity.totalDislike = totalDislike || 0;
+		entity.totalShare = totalShare || 0;
+	}
+
+	async afterUpdate(event: UpdateEvent<Post>): Promise<void | Promise<any>> {
+		console.log('check');
 		const connection = event.connection;
 		const queryRunner = connection.createQueryRunner();
-		const postId = entity.id;
 
-		const reactRepository = queryRunner.manager.getRepository(Reaction);
-		const postRepository = queryRunner.manager.getRepository(Post);
+		if (event.updatedColumns.length) {
+			for (const updateColumn of event.updatedColumns) {
+				const post = event.entity;
 
-		entity.totalLike = await reactRepository.count({
-			where: { postId: postId, type: REACT_TYPE.LIKE },
-		});
-		entity.totalDislike = await reactRepository.count({
-			where: { postId: postId, type: REACT_TYPE.DISLIKE },
-		});
+				const columnName = updateColumn.propertyName;
+				const bPRepository = queryRunner.manager.getRepository(BookmarkPost);
+				if (columnName === 'title') {
+					await bPRepository.update({ postId: post.id }, { title: post.title });
+				}
 
-		entity.totalShare = await postRepository.count({
-			where: { sharePostId: postId },
-		});
+				if (columnName === 'imageURL') {
+					await bPRepository.update(
+						{ postId: post.id },
+						{ imageURL: post.imageURL },
+					);
+				}
+			}
+		}
+	}
+
+	async afterSoftRemove(
+		event: SoftRemoveEvent<Post>,
+	): Promise<void | Promise<any>> {
+		const bPRepository = event.connection.getRepository(BookmarkPost);
+		await bPRepository.update({ postId: event.entityId }, { isDeleted: true });
 	}
 }

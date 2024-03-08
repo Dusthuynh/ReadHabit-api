@@ -6,8 +6,6 @@ import {
 	IsString,
 	IsBooleanString,
 	Matches,
-	IsBoolean,
-	IsNotEmpty,
 } from 'class-validator';
 
 export class GetCommentDto {
@@ -46,7 +44,10 @@ export class GetCommentDto {
 	})
 	path?: string;
 
-	@ApiProperty()
+	@ApiProperty({
+		type: Boolean,
+		default: false,
+	})
 	@IsBooleanString()
 	@Matches(/^(true|false)$/i, {
 		message: 'The includingChildren value must be either true or false',

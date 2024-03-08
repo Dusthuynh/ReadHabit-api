@@ -37,6 +37,7 @@ export class AuthService {
 		const payload: TokenPayloadDto = {
 			iss: this.configService.get('APP_NAME')!,
 			sub: user.id,
+			role: user.role,
 		};
 		return {
 			access_token: this.jwtService.sign(payload),
@@ -69,10 +70,11 @@ export class AuthService {
 			secret: this.configService.get('JWT_REFRESH_SECRET'),
 		});
 		if (payload) {
-			const { iss, sub } = payload;
+			const { iss, sub, role } = payload;
 			const signPayload: TokenPayloadDto = {
 				iss,
 				sub,
+				role,
 			};
 			return {
 				access_token: this.jwtService.sign(signPayload),

@@ -49,7 +49,7 @@ export class BookmarksController {
 	async findBookmarkById(@Param('id', ParseIntPipe) id: number) {
 		return await this.bookmarkService.findOneWithRelation({
 			where: { id },
-			relations: { owner: true, bookmarkPosts: { post: true } },
+			relations: { owner: true, bookmarkPosts: { createdBy: true } },
 			order: {
 				bookmarkPosts: { position: 'ASC' },
 			},

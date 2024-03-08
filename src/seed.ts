@@ -7,7 +7,17 @@ import { Post } from './modules/posts/entities/post.entity';
 import { Tag } from './modules/tags/entities/tag.entities';
 import { UserSeeder } from './seeder/user.seeder';
 import { User } from './modules/users/entities/user.entity';
-
+import { PostSeeder } from './seeder/post.seeder';
+import { ContentSourceSeeder } from './seeder/content_sources.seeder';
+import { ContentSource } from './modules/content_sources/entities/content_source.entity';
+import { TagSeeder } from './seeder/tag.seeder';
+import { ReactionSeeder } from './seeder/reaction.seeder';
+import { Reaction } from './modules/reactions/entities/reaction.entity';
+import { BookmarkSeeder } from './seeder/bookmark.seeder';
+import { Bookmark } from './modules/bookmarks/entities/bookmark.entity';
+import { BookmarkPost } from './modules/bookmark_posts/entities/bookmark_post.entity';
+import { CommentSeeder } from './seeder/comment.seeder';
+import { Comment } from './modules/comments/entities/comment.entity';
 
 seeder({
 	imports: [
@@ -15,8 +25,27 @@ seeder({
 			...appConfig.postgresConfig,
 			type: 'postgres',
 			entities: ['dist/src/modules/**/entities/*.entity.js'],
-			autoLoadEntities: true
+			autoLoadEntities: true,
 		}),
-		TypeOrmModule.forFeature([Category,Post,Tag,User]),
+		TypeOrmModule.forFeature([
+			Category,
+			Post,
+			Tag,
+			User,
+			ContentSource,
+			Reaction,
+			Bookmark,
+			BookmarkPost,
+			Comment,
+		]),
 	],
-}).run([CategorySeeder,UserSeeder]);
+}).run([
+	CategorySeeder,
+	UserSeeder,
+	ContentSourceSeeder,
+	TagSeeder,
+	PostSeeder,
+	ReactionSeeder,
+	CommentSeeder,
+	BookmarkSeeder,
+]);

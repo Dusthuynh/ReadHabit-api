@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CreateCategoryDto } from './dto/create-category.dto';
+import { deleteFile } from 'helpers/config';
 
 @Injectable()
 export class CategoriesService extends BaseService<Category> {
@@ -31,6 +32,7 @@ export class CategoriesService extends BaseService<Category> {
 		const data = await this.findOne({ id });
 		const { name, imageURL } = input;
 		if (imageURL) {
+			deleteFile(data.imageURL);
 			data.imageURL = imageURL;
 		}
 		if (name) {
