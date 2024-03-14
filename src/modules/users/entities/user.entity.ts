@@ -21,7 +21,7 @@ export class User extends BaseObject {
 	@Column({ unique: true })
 	email: string;
 
-	@Column()
+	@Column({ select: false })
 	password: string;
 
 	@Column()
@@ -35,6 +35,27 @@ export class User extends BaseObject {
 
 	@Column({ nullable: true })
 	fullName: string;
+
+	@Column({ nullable: true })
+	about: string;
+
+	@Column({ nullable: true })
+	youtubeLink: string;
+
+	@Column({ nullable: true })
+	facebookLink: string;
+
+	@Column({ nullable: true })
+	linkedinLink: string;
+
+	@Column({ nullable: true })
+	twitterLink: string;
+
+	@Column({ default: 0 })
+	totalFollower: number;
+
+	@Column({ default: 0 })
+	totalFollowee: number;
 
 	@Column({ nullable: true })
 	refreshToken: string;

@@ -66,7 +66,7 @@ export const userData: IUser[] = [
 		lastName: 'Nguyễn Trần Hồng',
 		password:
 			'907bb01dbbec472900343c88f06d9a11d26f91c97e1eeeae060580c9e33135b287ed8d57db8b1eef69dcbd318687e184c596d1d99ed2dfa1da54426e30a4ae22.dbf0ff59fe438de00fed495965d0ba8c',
-		avatar: 'files/avatar/hongan.jpg',
+		avatar: 'files/avatar/hongan.jpeg',
 		role: USER_ROLE.MEMBER,
 	},
 	{

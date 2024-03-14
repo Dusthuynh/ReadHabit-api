@@ -21,9 +21,9 @@ export class AuthService {
 	) {}
 
 	async login(loginDto: LoginDto) {
-		const user = await this.userService.findOneWithoutThrowError({
-			email: loginDto.email,
-		});
+		const user = await this.userService.findUserByEmailWithPassword(
+			loginDto.email,
+		);
 		if (!user) throw new UnauthorizedException();
 
 		const isMatchPassword = await Password.comparePassword(

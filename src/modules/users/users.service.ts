@@ -7,13 +7,13 @@ import { BaseService } from 'src/shared/bases/service.base';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
-import * as fs from 'fs';
 import { AddCategoryDto } from './dto/add-category.dto';
 import { CategoriesService } from '../categories/categories.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CurrentUserPayload } from 'src/shared/interfaces/current-user.interface';
 import { USER_ROLE } from 'src/shared/enum/user.enum';
 import { deleteFile } from 'helpers/config';
+import { Password } from 'src/utils/password';
 
 @Injectable()
 export class UsersService extends BaseService<User> {
@@ -28,17 +28,6 @@ export class UsersService extends BaseService<User> {
 	async findUserById(id: number): Promise<User | null> {
 		const data = await this.userRepository.findOne({
 			where: { id },
-			select: [
-				'username',
-				'phoneNumber',
-				'avatar',
-				'birthday',
-				'createdAt',
-				'id',
-				'firstName',
-				'lastName',
-				'fullName',
-			],
 			relations: {
 				categories: true,
 			},
@@ -65,6 +54,13 @@ export class UsersService extends BaseService<User> {
 				'Do not have permission to update user role',
 			);
 		}
+
+		if (updateUserDto.password) {
+			updateUserDto.password = await Password.hashPassword(
+				updateUserDto.password,
+			);
+		}
+
 		return this.updateOne({ id: userId }, updateUserDto);
 	}
 
@@ -96,5 +92,14 @@ export class UsersService extends BaseService<User> {
 		});
 		user.categories = categories;
 		return await this.userRepository.save(user);
+	}
+
+	async findUserByEmailWithPassword(email: string) {
+		const user = await this.userRepository
+			.createQueryBuilder('user')
+			.where('user.email = :email', { email })
+			.addSelect('user.password')
+			.getOne();
+		return user;
 	}
 }

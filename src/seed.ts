@@ -18,6 +18,8 @@ import { Bookmark } from './modules/bookmarks/entities/bookmark.entity';
 import { BookmarkPost } from './modules/bookmark_posts/entities/bookmark_post.entity';
 import { CommentSeeder } from './seeder/comment.seeder';
 import { Comment } from './modules/comments/entities/comment.entity';
+import { FollowSeeder } from './seeder/follow.seeder';
+import { Follow } from './modules/follows/entities/follow.entity';
 
 seeder({
 	imports: [
@@ -37,6 +39,7 @@ seeder({
 			Bookmark,
 			BookmarkPost,
 			Comment,
+			Follow,
 		]),
 	],
 }).run([
@@ -48,4 +51,5 @@ seeder({
 	ReactionSeeder,
 	CommentSeeder,
 	BookmarkSeeder,
+	FollowSeeder,
 ]);

@@ -4,7 +4,18 @@ import { IsEnum, IsOptional } from 'class-validator';
 import { USER_ROLE } from 'src/shared/enum/user.enum';
 
 export class UpdateUserDto extends PartialType(
-	PickType(CreateUserDto, ['birthday', 'firstName', 'lastName', 'phoneNumber']),
+	PickType(CreateUserDto, [
+		'birthday',
+		'firstName',
+		'lastName',
+		'phoneNumber',
+		'about',
+		'facebookLink',
+		'linkedinLink',
+		'twitterLink',
+		'youtubeLink',
+		'password',
+	]),
 ) {
 	@ApiProperty({
 		required: false,
