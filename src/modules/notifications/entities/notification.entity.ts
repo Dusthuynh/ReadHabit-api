@@ -25,10 +25,7 @@ export class Notification extends BaseObject {
 }
 
 @Entity()
-export class NotificationRecipient {
-	@PrimaryGeneratedColumn()
-	id: number;
-
+export class NotificationRecipient extends BaseObject {
 	@Column()
 	notificationId: number;
 

@@ -20,6 +20,11 @@ import { CommentSeeder } from './seeder/comment.seeder';
 import { Comment } from './modules/comments/entities/comment.entity';
 import { FollowSeeder } from './seeder/follow.seeder';
 import { Follow } from './modules/follows/entities/follow.entity';
+import { NotificationSeeder } from './seeder/notification.seeder';
+import {
+	Notification,
+	NotificationRecipient,
+} from './modules/notifications/entities/notification.entity';
 
 seeder({
 	imports: [
@@ -40,6 +45,8 @@ seeder({
 			BookmarkPost,
 			Comment,
 			Follow,
+			Notification,
+			NotificationRecipient,
 		]),
 	],
 }).run([
@@ -52,4 +59,5 @@ seeder({
 	CommentSeeder,
 	BookmarkSeeder,
 	FollowSeeder,
+	NotificationSeeder,
 ]);
