@@ -15,6 +15,12 @@ export const userData: IUser[] = [
 			'907bb01dbbec472900343c88f06d9a11d26f91c97e1eeeae060580c9e33135b287ed8d57db8b1eef69dcbd318687e184c596d1d99ed2dfa1da54426e30a4ae22.dbf0ff59fe438de00fed495965d0ba8c',
 		avatar: 'files/avatar/dust.admin.jpg',
 		role: USER_ROLE.ADMIN,
+		about:
+			'Tôi là một chàng trai đến từ vùng đất miền Tây Nam Bộ, Sóc Trăng, nơi mà sắc nước vàng ruộng lúa xen lẫn với những cánh đồng dừa bát ngát. Đam mê của tôi là đọc sách và truyền cảm hứng cho những người xung quanh.',
+		youtubeLink: 'https://www.youtube.com/c/HuynhDust',
+		facebookLink: 'https://www.facebook.com/huynhdust/',
+		linkedinLink: 'https://www.linkedin.com/in/dusthuynh/',
+		twitterLink: 'https://twitter.com/huynhdust123',
 	},
 	{
 		id: 2,
@@ -28,6 +34,12 @@ export const userData: IUser[] = [
 			'907bb01dbbec472900343c88f06d9a11d26f91c97e1eeeae060580c9e33135b287ed8d57db8b1eef69dcbd318687e184c596d1d99ed2dfa1da54426e30a4ae22.dbf0ff59fe438de00fed495965d0ba8c',
 		avatar: 'files/avatar/loc.admin.jpg',
 		role: USER_ROLE.ADMIN,
+		about:
+			'Tôi là một chàng trai đến từ vùng đất miền Tây Nam Bộ, Sóc Trăng, nơi mà sắc nước vàng ruộng lúa xen lẫn với những cánh đồng dừa bát ngát. Đam mê của tôi là đọc sách và truyền cảm hứng cho những người xung quanh.',
+		youtubeLink: 'https://www.youtube.com/c/HuynhDust',
+		facebookLink: 'https://www.facebook.com/huynhdust/',
+		linkedinLink: 'https://www.linkedin.com/in/dusthuynh/',
+		twitterLink: 'https://twitter.com/huynhdust123',
 	},
 	{
 		id: 3,
@@ -41,6 +53,12 @@ export const userData: IUser[] = [
 			'907bb01dbbec472900343c88f06d9a11d26f91c97e1eeeae060580c9e33135b287ed8d57db8b1eef69dcbd318687e184c596d1d99ed2dfa1da54426e30a4ae22.dbf0ff59fe438de00fed495965d0ba8c',
 		avatar: 'files/avatar/thaiha.jpg',
 		role: USER_ROLE.MEMBER,
+		about:
+			'Tôi là một chàng trai đến từ vùng đất miền Tây Nam Bộ, Sóc Trăng, nơi mà sắc nước vàng ruộng lúa xen lẫn với những cánh đồng dừa bát ngát. Đam mê của tôi là đọc sách và truyền cảm hứng cho những người xung quanh.',
+		youtubeLink: 'https://www.youtube.com/c/HuynhDust',
+		facebookLink: 'https://www.facebook.com/huynhdust/',
+		linkedinLink: 'https://www.linkedin.com/in/dusthuynh/',
+		twitterLink: 'https://twitter.com/huynhdust123',
 	},
 	{
 		id: 4,
@@ -54,6 +72,12 @@ export const userData: IUser[] = [
 			'907bb01dbbec472900343c88f06d9a11d26f91c97e1eeeae060580c9e33135b287ed8d57db8b1eef69dcbd318687e184c596d1d99ed2dfa1da54426e30a4ae22.dbf0ff59fe438de00fed495965d0ba8c',
 		avatar: 'files/avatar/phuhien.jpg',
 		role: USER_ROLE.MEMBER,
+		about:
+			'Tôi là một chàng trai đến từ vùng đất miền Tây Nam Bộ, Sóc Trăng, nơi mà sắc nước vàng ruộng lúa xen lẫn với những cánh đồng dừa bát ngát. Đam mê của tôi là đọc sách và truyền cảm hứng cho những người xung quanh.',
+		youtubeLink: 'https://www.youtube.com/c/HuynhDust',
+		facebookLink: 'https://www.facebook.com/huynhdust/',
+		linkedinLink: 'https://www.linkedin.com/in/dusthuynh/',
+		twitterLink: 'https://twitter.com/huynhdust123',
 	},
 	{
 		id: 5,
@@ -68,6 +92,12 @@ export const userData: IUser[] = [
 			'907bb01dbbec472900343c88f06d9a11d26f91c97e1eeeae060580c9e33135b287ed8d57db8b1eef69dcbd318687e184c596d1d99ed2dfa1da54426e30a4ae22.dbf0ff59fe438de00fed495965d0ba8c',
 		avatar: 'files/avatar/hongan.jpeg',
 		role: USER_ROLE.MEMBER,
+		about:
+			'Tôi là một cô gái sinh ra và lớn lên tại Sóc Trăng, một vùng đất tươi đẹp và đầy màu sắc ở miền Tây Nam Bộ Việt Nam. Sở thích của tôi là đọc sách và tôi luôn muốn chia sẻ niềm đam mê này với những bạn gái khác.',
+		youtubeLink: 'https://www.youtube.com/c/HuynhDust',
+		facebookLink: 'https://www.facebook.com/huynhdust/',
+		linkedinLink: 'https://www.linkedin.com/in/dusthuynh/',
+		twitterLink: 'https://twitter.com/huynhdust123',
 	},
 	{
 		id: 6,
@@ -81,5 +111,11 @@ export const userData: IUser[] = [
 			'907bb01dbbec472900343c88f06d9a11d26f91c97e1eeeae060580c9e33135b287ed8d57db8b1eef69dcbd318687e184c596d1d99ed2dfa1da54426e30a4ae22.dbf0ff59fe438de00fed495965d0ba8c',
 		avatar: 'files/avatar/phuminh.jpg',
 		role: USER_ROLE.MEMBER,
+		about:
+			'Tôi là một chàng trai đến từ vùng đất miền Tây Nam Bộ, Sóc Trăng, nơi mà sắc nước vàng ruộng lúa xen lẫn với những cánh đồng dừa bát ngát. Đam mê của tôi là đọc sách và truyền cảm hứng cho những người xung quanh.',
+		youtubeLink: 'https://www.youtube.com/c/HuynhDust',
+		facebookLink: 'https://www.facebook.com/huynhdust/',
+		linkedinLink: 'https://www.linkedin.com/in/dusthuynh/',
+		twitterLink: 'https://twitter.com/huynhdust123',
 	},
 ];
