@@ -11,7 +11,7 @@ export class GetFeedbackDto extends DefaultListDto {
 	@IsOptional()
 	@IsString()
 	@Matches(/^(true|false)$/i, {
-		message: 'The isLock value must be either true or false',
+		message: 'The isCheck value must be either true or false',
 	})
 	isCheck?: string;
 

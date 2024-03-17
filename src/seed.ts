@@ -27,6 +27,11 @@ import {
 } from './modules/notifications/entities/notification.entity';
 import { FeedbackSeeder } from './seeder/feedback.seeder';
 import { Feedback } from './modules/feedbacks/entities/feedback.entity';
+import { EventLogSeeder } from './seeder/event_log.seeder';
+import { EventLog } from './modules/event_logs/entities/event_log.entity';
+import { RankSeeder } from './seeder/rank.seeder';
+import { Rank } from './modules/ranks/entities/rank.entity';
+import { RankLevel } from './modules/rank_levels/entities/rank_level.entity';
 
 seeder({
 	imports: [
@@ -50,6 +55,9 @@ seeder({
 			Notification,
 			NotificationRecipient,
 			Feedback,
+			EventLog,
+			Rank,
+			RankLevel,
 		]),
 	],
 }).run([
@@ -64,4 +72,6 @@ seeder({
 	FollowSeeder,
 	NotificationSeeder,
 	FeedbackSeeder,
+	EventLogSeeder,
+	RankSeeder,
 ]);
