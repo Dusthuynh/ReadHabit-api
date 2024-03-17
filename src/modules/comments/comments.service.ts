@@ -32,6 +32,7 @@ export class CommentsService extends BaseService<Comment> {
 			order: { createdAt: 'asc' },
 			take: limit ? (limit <= 100 ? limit : 100) : 10,
 			skip: offset ? offset : 0,
+			relations: { createdBy: true },
 		});
 
 		const includingChildren = JSON.parse(condition.includingChildren);
@@ -40,6 +41,7 @@ export class CommentsService extends BaseService<Comment> {
 			for (const comment of commentRes) {
 				const childComments = await this.commentRepository
 					.createQueryBuilder('comment')
+					.leftJoinAndSelect('comment.createdBy', 'createdBy')
 					.where('comment.path LIKE :path', { path: `${comment.path}%` })
 					.andWhere('comment.postId = :postId', { postId: condition.postId })
 					.orderBy('comment.createdAt', 'ASC')

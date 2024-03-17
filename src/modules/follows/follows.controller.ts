@@ -4,6 +4,8 @@ import {
 	Controller,
 	Delete,
 	Get,
+	Param,
+	ParseIntPipe,
 	Post,
 	Query,
 } from '@nestjs/common';
@@ -52,18 +54,18 @@ export class FollowsController {
 		});
 	}
 
-	@Delete(':id')
+	@Delete('followeeId/:id')
 	@ApiBearerAuth()
 	@ApiOperation({
 		summary: 'Unfollow user',
 	})
 	async unfollowUser(
-		@Body() input: UnfollowDto,
 		@CurrentUser('uid') userId: number,
+		@Param('id', ParseIntPipe) id: number,
 	) {
 		const followExists = await this.followService.findOne({
 			followerId: userId,
-			followeeId: input.followeeId,
+			followeeId: id,
 		});
 		return await this.followService.hardDeleteOne({
 			id: followExists.id,

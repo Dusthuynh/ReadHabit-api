@@ -25,6 +25,8 @@ import {
 	Notification,
 	NotificationRecipient,
 } from './modules/notifications/entities/notification.entity';
+import { FeedbackSeeder } from './seeder/feedback.seeder';
+import { Feedback } from './modules/feedbacks/entities/feedback.entity';
 
 seeder({
 	imports: [
@@ -47,6 +49,7 @@ seeder({
 			Follow,
 			Notification,
 			NotificationRecipient,
+			Feedback,
 		]),
 	],
 }).run([
@@ -60,4 +63,5 @@ seeder({
 	BookmarkSeeder,
 	FollowSeeder,
 	NotificationSeeder,
+	FeedbackSeeder,
 ]);
