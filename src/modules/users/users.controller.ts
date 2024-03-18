@@ -50,8 +50,15 @@ export class UsersController {
 	@Public()
 	@Get(':id')
 	@ApiParam({ name: 'id', type: Number, description: 'User ID' })
-	findUserById(@Param('id') id: number) {
-		return this.userService.findOne({ id });
+	async findUserById(@Param('id') id: number) {
+		const data = await this.userService.findOneWithRelation({
+			where: { id },
+			relations: { categories: true },
+		});
+		if (!data) {
+			throw new BadRequestException('user not found');
+		}
+		return data;
 	}
 
 	@Public()
