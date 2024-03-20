@@ -23,18 +23,20 @@ export class BookmarkPostSubscriber
 		event: RemoveEvent<BookmarkPost>,
 	): Promise<void | Promise<any>> {
 		const connection = event.connection;
-		const queryRunner = connection.createQueryRunner();
-		const { position, bookmarkId } = event.entity;
+		if (event.entity) {
+			const queryRunner = connection.createQueryRunner();
+			const { position, bookmarkId } = event.entity;
 
-		const bookmarkPostRepository =
-			queryRunner.manager.getRepository(BookmarkPost);
+			const bookmarkPostRepository =
+				queryRunner.manager.getRepository(BookmarkPost);
 
-		await bookmarkPostRepository.update(
-			{
-				position: MoreThan(position),
-				bookmarkId,
-			},
-			{ position: () => 'position - 1' },
-		);
+			await bookmarkPostRepository.update(
+				{
+					position: MoreThan(position),
+					bookmarkId,
+				},
+				{ position: () => 'position - 1' },
+			);
+		}
 	}
 }
