@@ -40,4 +40,17 @@ export class CategoriesService extends BaseService<Category> {
 		}
 		return await this.categoryRepository.save(data);
 	}
+
+	async deleteCategory(id: number) {
+		const data = await this.categoryRepository.findOne({
+			where: { id },
+			relations: { posts: true },
+		});
+		if (data.posts.length) {
+			throw new BadRequestException(
+				'Can not delete the category with existing posts',
+			);
+		}
+		return await this.deleteOne({ id });
+	}
 }

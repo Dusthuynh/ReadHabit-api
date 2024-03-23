@@ -139,6 +139,6 @@ export class CategoriesController {
 				'Do not have permission to delete this category',
 			);
 		}
-		return await this.categoryService.deleteOne({ id });
+		return await this.categoryService.deleteCategory(id);
 	}
 }
