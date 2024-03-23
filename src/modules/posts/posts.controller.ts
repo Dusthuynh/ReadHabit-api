@@ -1,3 +1,4 @@
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import {
 	Body,
 	Controller,
@@ -30,11 +31,16 @@ import { CreateBookmarkPostDto } from '../bookmark_posts/dto/create-bookmark-pos
 import { ReviewPostDto } from './dto/review-post.dto';
 import { PostsService } from './posts.service';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { EVENT_ACTION } from 'src/shared/enum/event.enum';
+import { PostEvent } from '../event_logs/events/post.event';
 
 @Controller('posts')
 @ApiTags('posts')
 export class PostsController {
-	constructor(private readonly postService: PostsService) {}
+	constructor(
+		private readonly postService: PostsService,
+		private eventEmitter: EventEmitter2,
+	) {}
 
 	@Public()
 	@Get('')
@@ -99,7 +105,13 @@ export class PostsController {
 		@CurrentUser('uid') userId: number,
 	) {
 		input.imageURL = postImage ? postImage.path : null;
-		return await this.postService.createPost(userId, input);
+		const data = await this.postService.createPost(userId, input);
+		this.eventEmitter.emit(`post.${EVENT_ACTION.CREATE}`, {
+			postId: data.id,
+			actorId: userId,
+			action: EVENT_ACTION.CREATE,
+		} as PostEvent);
+		return data;
 	}
 
 	@ApiBearerAuth()
@@ -172,7 +184,13 @@ export class PostsController {
 		@CurrentUser('uid') userId: number,
 		@Body() input: CreateCommentDto,
 	) {
-		return await this.postService.commentPost(id, userId, input);
+		const data = await this.postService.commentPost(id, userId, input);
+		this.eventEmitter.emit(`post.${EVENT_ACTION.COMMENT}`, {
+			postId: data.postId,
+			actorId: userId,
+			action: EVENT_ACTION.COMMENT,
+		} as PostEvent);
+		return data;
 	}
 
 	//REACTIONS
@@ -202,7 +220,13 @@ export class PostsController {
 		@Body() input: SharePostDto,
 		@CurrentUser('uid') userId: number,
 	) {
-		return await this.postService.sharePost(id, userId, input);
+		const data = await this.postService.sharePost(id, userId, input);
+		this.eventEmitter.emit(`post.${EVENT_ACTION.SHARE}`, {
+			postId: data.sharePostId,
+			actorId: userId,
+			action: EVENT_ACTION.SHARE,
+		} as PostEvent);
+		return data;
 	}
 
 	//BOOKMARK

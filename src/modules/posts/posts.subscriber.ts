@@ -41,7 +41,6 @@ export class PostSubscriber implements EntitySubscriberInterface<Post> {
 	}
 
 	async afterUpdate(event: UpdateEvent<Post>): Promise<void | Promise<any>> {
-		console.log('check');
 		const connection = event.connection;
 		const queryRunner = connection.createQueryRunner();
 

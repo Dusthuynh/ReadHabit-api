@@ -11,6 +11,8 @@ import {
 	Repository,
 } from 'typeorm';
 import { GetEventLogDto } from './dto/get-event-logs.dto';
+import { OnEvent } from '@nestjs/event-emitter';
+import { PostEvent } from './events/post.event';
 
 @Injectable()
 export class EventLogsService extends BaseService<EventLog> {
@@ -76,5 +78,11 @@ export class EventLogsService extends BaseService<EventLog> {
 			total: count,
 			data,
 		};
+	}
+
+	@OnEvent('post.*')
+	async createPostEventLog(payload: PostEvent) {
+		const data = this.eventLogRepository.create(payload);
+		await this.eventLogRepository.save(data);
 	}
 }

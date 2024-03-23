@@ -1,3 +1,4 @@
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
@@ -65,6 +66,9 @@ import { ReactionsModule } from './modules/reactions/reactions.module';
 				};
 			},
 			inject: [ConfigService],
+		}),
+		EventEmitterModule.forRoot({
+			wildcard: true,
 		}),
 		AuthModule,
 		UsersModule,

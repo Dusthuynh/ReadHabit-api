@@ -124,8 +124,9 @@ export class PostsService extends BaseService<Post> {
 		const { postImage, tags, ...data } = input;
 
 		if (
+			input.status &&
 			input.status !== POST_STATUS.CREATED &&
-			input.status !== POST_STATUS.PUBLISHED
+			input.status !== POST_STATUS.REVIEWING
 		) {
 			throw new BadRequestException('Invalid Post status when create post');
 		}
@@ -142,17 +143,19 @@ export class PostsService extends BaseService<Post> {
 				);
 		}
 
-		//NOTE: create many tags
-		const tagArray = tags.split(',');
-		const newTags = await this.tagService.createTags(userId, {
-			tags: tagArray,
-			categoryId: input.categoryId,
-		});
-
 		const res = this.postRepository.create(data);
-		res.tags = newTags;
-		res.createdById = userId;
 
+		//NOTE: create many tags
+		if (tags) {
+			const tagArray = tags.split(',');
+			const newTags = await this.tagService.createTags(userId, {
+				tags: tagArray,
+				categoryId: input.categoryId,
+			});
+			res.tags = newTags;
+		}
+
+		res.createdById = userId;
 		return await this.postRepository.save(res);
 	}
 
