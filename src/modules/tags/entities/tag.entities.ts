@@ -16,6 +16,9 @@ export class Tag extends BaseObject {
 	@Column()
 	createdById: number;
 
+	@Column({ default: false })
+	isLock: boolean;
+
 	@ManyToOne(() => Category)
 	category: Category;
 

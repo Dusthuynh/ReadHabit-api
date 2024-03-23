@@ -18,6 +18,7 @@ import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { TagsService } from './tags.service';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { CurrentUserPayload } from 'src/shared/interfaces/current-user.interface';
 
 @Controller('tags')
 @ApiTags('tags')
@@ -68,10 +69,11 @@ export class TagsController {
 		summary: 'Update Tag by Id',
 	})
 	async UpdateTag(
-		@Param('id', ParseIntPipe) id: number,
+		@CurrentUser() user: CurrentUserPayload,
+		@Param('id', ParseIntPipe) tagId: number,
 		@Body() input: UpdateTagDto,
 	) {
-		return await this.tagService.updateOne({ id }, input);
+		return await this.tagService.updateTag(tagId, user, input);
 	}
 
 	@ApiBearerAuth()
@@ -79,8 +81,10 @@ export class TagsController {
 	@ApiOperation({
 		summary: 'Delete Tag By Id',
 	})
-	async deleteTag(@Param('id', ParseIntPipe) id: number) {
-		//TODO: Before delete tag, check the related
-		return await this.tagService.deleteOne({ id });
+	async deleteTag(
+		@Param('id', ParseIntPipe) tagId: number,
+		@CurrentUser() user: CurrentUserPayload,
+	) {
+		return await this.tagService.deleteTag(tagId, user);
 	}
 }

@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+	BadRequestException,
+	ForbiddenException,
+	Injectable,
+} from '@nestjs/common';
 import { BaseService } from 'src/shared/bases/service.base';
 import { Post } from './entities/post.entity';
 import { GetPostDto } from './dto/get-post.dto';
@@ -279,17 +283,18 @@ export class PostsService extends BaseService<Post> {
 		const post = await this.findOne({ id: postId });
 		const user = await this.userService.findOne({ id: userId });
 
-		//TODO: check role user (Admin can review)
-		if (
-			post.status !== POST_STATUS.REVIEWING ||
-			user.role !== USER_ROLE.ADMIN
-		) {
-			throw new BadRequestException('Can not review this post');
+		if (post.status !== POST_STATUS.REVIEWING) {
+			throw new BadRequestException("Post not in 'reviewing' status");
+		}
+
+		if (user.role !== USER_ROLE.ADMIN) {
+			throw new ForbiddenException('Admin permission required');
 		}
 
 		if (input.status === STATUS_USER_REVIEW.CONFIRM) {
 			post.status = POST_STATUS.PUBLISHED;
 			post.publishDate = new Date();
+			await this.tagService.updateLockTagByPost(postId);
 		} else if (input.status === STATUS_USER_REVIEW.REJECT) {
 			post.status = POST_STATUS.REJECT;
 		}

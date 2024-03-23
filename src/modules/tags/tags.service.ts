@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+	BadRequestException,
+	ForbiddenException,
+	Injectable,
+} from '@nestjs/common';
 import { BaseService } from 'src/shared/bases/service.base';
 import { Tag } from './entities/tag.entities';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,6 +11,9 @@ import { CreateTagDto } from './dto/create-tag.dto';
 import { CategoriesService } from '../categories/categories.service';
 import { GetTagDto } from './dto/get-tag.dto';
 import { ESortOrder } from 'src/shared/enum/sort.enum';
+import { UpdateTagDto } from './dto/update-tag.dto';
+import { CurrentUserPayload } from 'src/shared/interfaces/current-user.interface';
+import { USER_ROLE } from 'src/shared/enum/user.enum';
 
 @Injectable()
 export class TagsService extends BaseService<Tag> {
@@ -85,5 +92,55 @@ export class TagsService extends BaseService<Tag> {
 
 		const newData = await this.tagRepository.save(newTags);
 		return [...newData, ...existingTags];
+	}
+
+	async updateTag(
+		tagId: number,
+		user: CurrentUserPayload,
+		input: UpdateTagDto,
+	) {
+		const tag = await this.tagRepository.findOne({ where: { id: tagId } });
+		if (user.role !== USER_ROLE.ADMIN) {
+			if (user.uid == tag.createdById) {
+				if (tag.isLock) {
+					throw new ForbiddenException('Can not update tag when locked');
+				}
+				if (input.isLock) {
+					throw new BadRequestException(
+						'Not permission to update isLock of tag',
+					);
+				}
+			} else {
+				throw new ForbiddenException('Not permission to update tag');
+			}
+		}
+		return await this.updateOne({ id: tagId }, input);
+	}
+
+	async deleteTag(tagId: number, user: CurrentUserPayload) {
+		const tag = await this.tagRepository.findOne({ where: { id: tagId } });
+		if (user.role !== USER_ROLE.ADMIN) {
+			if (user.uid == tag.createdById) {
+				if (tag.isLock) {
+					throw new ForbiddenException('Can not delete tag when locked');
+				}
+			} else {
+				throw new ForbiddenException('Not permission to delete tag');
+			}
+		}
+
+		return await this.deleteOne({ id: tagId });
+	}
+
+	async updateLockTagByPost(postId: number) {
+		const tags = await this.tagRepository
+			.createQueryBuilder('tag')
+			.innerJoin('tag.posts', 'post')
+			.where('post.id = :postId', { postId })
+			.getMany();
+		tags.forEach((tag) => {
+			tag.isLock = true;
+		});
+		await this.tagRepository.save(tags);
 	}
 }
