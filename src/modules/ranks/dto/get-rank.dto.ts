@@ -29,7 +29,7 @@ export class GetRankDto extends DefaultListDto {
 	@Matches(/^(true|false)$/i, {
 		message: 'The isLock value must be either true or false',
 	})
-	isLock?: boolean;
+	isLock?: string;
 
 	@ApiProperty({
 		required: false,

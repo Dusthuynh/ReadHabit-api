@@ -1,13 +1,20 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString, Min, MinLength } from 'class-validator';
+import {
+	IsNumber,
+	IsOptional,
+	IsString,
+	Min,
+	MinLength,
+} from 'class-validator';
 
 export class CreateCommentDto {
 	@IsString()
-	@MinLength(10)
+	@MinLength(1)
 	@ApiProperty()
 	message: string;
 
 	@ApiProperty({ required: false })
+	@IsOptional()
 	@IsNumber()
 	@Min(1)
 	parentId: number;

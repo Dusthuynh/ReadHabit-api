@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { IsString, MinLength, IsOptional } from 'class-validator';
 
 export class UpdateContentSourceDto {
@@ -15,4 +15,7 @@ export class UpdateContentSourceDto {
 	})
 	@IsOptional()
 	contentSourceImage?: string;
+
+	@ApiHideProperty()
+	avatar?: string;
 }

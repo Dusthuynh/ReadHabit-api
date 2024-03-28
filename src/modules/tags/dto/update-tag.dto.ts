@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 export class UpdateTagDto {
 	@IsOptional()
@@ -7,8 +7,11 @@ export class UpdateTagDto {
 	@ApiProperty()
 	name?: string;
 
+	@ApiProperty({
+		required: false,
+		type: Boolean,
+	})
 	@IsOptional()
-	@IsNumber()
-	@ApiProperty()
-	categoryId?: number;
+	@IsBoolean()
+	isLock?: boolean;
 }

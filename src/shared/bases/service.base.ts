@@ -280,6 +280,7 @@ export abstract class BaseService<T> {
 	 * @param entities
 	 * @returns
 	 */
+
 	async removeMany(entities: DeepPartial<T>[]) {
 		try {
 			const res = await this._repository.softRemove(entities);
@@ -287,6 +288,20 @@ export abstract class BaseService<T> {
 				return { success: false };
 			}
 			return { success: true };
+		} catch (err) {
+			throw new BadRequestException(err);
+		}
+	}
+
+	async hardDeleteOne(
+		criteria: number | FindOptionsWhere<T>,
+	): Promise<{ success: boolean }> {
+		try {
+			const data = await this._repository.delete(criteria);
+			if (data.affected === 1) {
+				return { success: true };
+			}
+			throw new BadRequestException('Delete failed!');
 		} catch (err) {
 			throw new BadRequestException(err);
 		}

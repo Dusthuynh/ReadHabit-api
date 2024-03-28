@@ -1,3 +1,4 @@
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import {
 	Body,
 	Controller,
@@ -11,7 +12,12 @@ import {
 	UploadedFile,
 	UseInterceptors,
 } from '@nestjs/common';
-import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+	ApiBearerAuth,
+	ApiConsumes,
+	ApiOperation,
+	ApiTags,
+} from '@nestjs/swagger';
 import { Public } from '../auth/utils';
 import { GetPostDto } from './dto/get-post.dto';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -23,17 +29,26 @@ import { CreateReactionDto } from '../reactions/dto/create-reaction.dto';
 import { SharePostDto } from './dto/share-post.dto';
 import { CreateBookmarkPostDto } from '../bookmark_posts/dto/create-bookmark-post.dto';
 import { ReviewPostDto } from './dto/review-post.dto';
+import { PostsService } from './posts.service';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { EVENT_ACTION } from 'src/shared/enum/event.enum';
+import { PostEvent } from '../event_logs/events/post.event';
 
 @Controller('posts')
 @ApiTags('posts')
 export class PostsController {
+	constructor(
+		private readonly postService: PostsService,
+		private eventEmitter: EventEmitter2,
+	) {}
+
 	@Public()
 	@Get('')
 	@ApiOperation({
 		summary: 'Get many Post',
 	})
-	getManyPost(@Query() filter: GetPostDto) {
-		return filter;
+	async getManyPost(@Query() filter: GetPostDto) {
+		return await this.postService.getManyPost(filter);
 	}
 
 	@Public()
@@ -41,11 +56,23 @@ export class PostsController {
 	@ApiOperation({
 		summary: 'Get Post by Id',
 	})
-	findPostById(@Param('id', ParseIntPipe) id: number) {
-		return id;
+	async findPostById(@Param('id', ParseIntPipe) id: number) {
+		return await this.postService.findOneWithRelation({
+			where: { id },
+			relations: {
+				tags: true,
+				contentSource: true,
+				category: true,
+				createdBy: true,
+				sharePost: true,
+				sharedByPosts: true,
+				comments: true,
+				reactions: true,
+			},
+		});
 	}
 
-	@Public()
+	@ApiBearerAuth()
 	@Post()
 	@ApiOperation({
 		summary: 'Create Post',
@@ -72,23 +99,32 @@ export class PostsController {
 			},
 		}),
 	)
-	createPost(
+	async createPost(
 		@Body() input: CreatePostDto,
 		@UploadedFile() postImage: Express.Multer.File,
+		@CurrentUser('uid') userId: number,
 	) {
-		return { input, postImage };
+		input.imageURL = postImage ? postImage.path : null;
+		const data = await this.postService.createPost(userId, input);
+		this.eventEmitter.emit(`post.${EVENT_ACTION.CREATE}`, {
+			postId: data.id,
+			actorId: userId,
+			action: EVENT_ACTION.CREATE,
+		} as PostEvent);
+		return data;
 	}
 
-	@Public()
+	@ApiBearerAuth()
 	@Post(':id/review')
-	reviewPost(
+	async reviewPost(
 		@Body() input: ReviewPostDto,
 		@Param('id', ParseIntPipe) id: number,
+		@CurrentUser('uid') userId: number,
 	) {
-		return { id, input };
+		return await this.postService.reviewPost(id, userId, input);
 	}
 
-	@Public()
+	@ApiBearerAuth()
 	@Patch(':id')
 	@ApiOperation({
 		summary: 'Update Post by Id',
@@ -115,75 +151,105 @@ export class PostsController {
 			},
 		}),
 	)
-	updatePost(
+	async updatePost(
 		@UploadedFile() postImage: Express.Multer.File,
 		@Body() input: UpdatePostDto,
 		@Param('id', ParseIntPipe) id: number,
+		@CurrentUser('uid') userId: number,
 	) {
-		return { id, input, postImage };
+		input.imageURL = postImage ? postImage.path : null;
+		return await this.postService.updatePost(id, userId, input);
 	}
 
-	@Public()
+	@ApiBearerAuth()
 	@Delete(':id')
 	@ApiOperation({
 		summary: 'Delete Post by Id',
 	})
-	deletePost(@Param('id', ParseIntPipe) id: number) {
-		//TODO: Before delete post, check the related
-		return id;
+	async deletePost(
+		@Param('id', ParseIntPipe) id: number,
+		@CurrentUser('uid') userId: number,
+	) {
+		return await this.postService.deletePost(id, userId);
 	}
 
 	//COMMENTS
-	@Public()
+	@ApiBearerAuth()
 	@Post(':id/comments')
 	@ApiOperation({
 		summary: 'Create Comment by post Id',
 	})
-	commentPost(
+	async commentPost(
 		@Param('id', ParseIntPipe) id: number,
+		@CurrentUser('uid') userId: number,
 		@Body() input: CreateCommentDto,
 	) {
-		return { id, input };
+		const data = await this.postService.commentPost(id, userId, input);
+		this.eventEmitter.emit(`post.${EVENT_ACTION.COMMENT}`, {
+			postId: data.postId,
+			actorId: userId,
+			action: EVENT_ACTION.COMMENT,
+		} as PostEvent);
+		return data;
 	}
 
 	//REACTIONS
-	@Public()
+	@ApiBearerAuth()
 	@Post(':id/react')
 	@ApiOperation({
 		summary: 'React post by post Id',
 	})
-	reactPost(
+	async reactPost(
 		@Param('id', ParseIntPipe) id: number,
 		@Body() input: CreateReactionDto,
+		@CurrentUser('uid') userId: number,
 	) {
-		return { id, input };
+		input.userId = userId;
+		input.postId = id;
+		return await this.postService.reactPost(input);
 	}
 
 	//SHARE POST
-	@Public()
+	@ApiBearerAuth()
 	@Post(':id/share')
 	@ApiOperation({
 		summary: 'Share post by post Id',
 	})
-	sharePost(
+	async sharePost(
 		@Param('id', ParseIntPipe) id: number,
 		@Body() input: SharePostDto,
+		@CurrentUser('uid') userId: number,
 	) {
-		//TODO: add request userId
-		return { id, input };
+		const data = await this.postService.sharePost(id, userId, input);
+		this.eventEmitter.emit(`post.${EVENT_ACTION.SHARE}`, {
+			postId: data.sharePostId,
+			actorId: userId,
+			action: EVENT_ACTION.SHARE,
+		} as PostEvent);
+		return data;
 	}
 
 	//BOOKMARK
-	@Public()
+	@ApiBearerAuth()
 	@Post(':id/bookmark')
 	@ApiOperation({
 		summary: 'Bookmark Post by post Id',
 	})
-	bookmarkPost(
+	async createBookmarkPost(
 		@Param('id', ParseIntPipe) id: number,
+		@CurrentUser('uid') userId: number,
 		@Body() input: CreateBookmarkPostDto,
 	) {
-		//TODO: add request userId
-		return { id, input };
+		return await this.postService.createBookmarkPost(id, userId, input);
+	}
+
+	@ApiBearerAuth()
+	@Post('generate')
+	@ApiOperation({
+		summary: 'Generate Post (auto)',
+	})
+	async generatePost() {
+		this.eventEmitter.emit('generate.post');
+		return 'task processing';
 	}
 }

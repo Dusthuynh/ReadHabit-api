@@ -1,8 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { USER_ROLE } from 'src/shared/enum/user.enum';
 
 export class TokenPayloadDto {
 	sub: number;
 	iss: string;
+	role: USER_ROLE;
 }
 
 export class TokenResponse {

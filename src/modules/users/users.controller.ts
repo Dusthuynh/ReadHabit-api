@@ -50,8 +50,15 @@ export class UsersController {
 	@Public()
 	@Get(':id')
 	@ApiParam({ name: 'id', type: Number, description: 'User ID' })
-	findUserById(@Param('id') id: number) {
-		return this.userService.findOne({ id });
+	async findUserById(@Param('id') id: number) {
+		const data = await this.userService.findOneWithRelation({
+			where: { id },
+			relations: { categories: true },
+		});
+		if (!data) {
+			throw new BadRequestException('user not found');
+		}
+		return data;
 	}
 
 	@Public()
@@ -95,7 +102,7 @@ export class UsersController {
 		return this.userService.findAll(filter);
 	}
 
-	@Public()
+	@ApiBearerAuth()
 	@Post()
 	@ApiOperation({
 		summary: 'Create One User',
@@ -127,7 +134,7 @@ export class UsersController {
 		return this.userService.createOne(input);
 	}
 
-	@Public()
+	@ApiBearerAuth()
 	@Patch(':id')
 	@ApiParam({
 		name: 'id',
@@ -135,14 +142,16 @@ export class UsersController {
 		description: 'User ID',
 		example: 1,
 	})
-	updateUser(
+	async updateUser(
 		@Param('id', ParseIntPipe) id: number,
 		@Body() updateUserDto: UpdateUserDto,
+		@CurrentUser() user: CurrentUserPayload,
 	) {
-		return this.userService.updateOne({ id }, updateUserDto);
+		return await this.userService.updateUser(id, user, updateUserDto);
+		// return this.userService.updateOne({ id }, updateUserDto);
 	}
 
-	@Public()
+	@ApiBearerAuth()
 	@Delete(':id')
 	@ApiParam({ name: 'id', type: Number, description: 'User ID' })
 	deleteUser(@Param('id', ParseIntPipe) id: number) {
@@ -150,6 +159,7 @@ export class UsersController {
 		return this.userService.deleteOne({ id });
 	}
 
+	@ApiBearerAuth()
 	@Post('upload-avatar')
 	@ApiBearerAuth()
 	@ApiConsumes('multipart/form-data')
@@ -192,12 +202,13 @@ export class UsersController {
 	}
 
 	//CATEGORIES
+	@ApiBearerAuth()
 	@Post(':id/categories')
 	@ApiOperation({ summary: "Set user's categories" })
-	addCategories(
+	async addCategories(
 		@Param('id', ParseIntPipe) id: number,
 		@Body() input: AddCategoryDto,
 	) {
-		return { id, input };
+		return await this.userService.addCategories(id, input);
 	}
 }

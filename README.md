@@ -13,8 +13,24 @@ cp .env.example .env
 docker compose up -d
 ```
 
-View APIs docs at <http://localhost:3000/docs>
-View Adminer at <http://localhost:8081>
+## Restart docker (clean data)
+
+```bash
+docker compose down -v
+docker compose up -d
+```
+
+## Seeding data
+
+```bash
+npm run seed
+```
+
+## Local Development URLs
+
+- View APIs docs at <http://localhost:3000/docs>
+- View Adminer at <http://localhost:8081>
+- View Files at <http://localhost:8080/{path}>
 
 ## Re-build docker image after install new package
 

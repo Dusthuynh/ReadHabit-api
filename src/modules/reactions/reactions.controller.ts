@@ -9,34 +9,19 @@ import {
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Public } from '../auth/utils';
 import { GetReactionDto } from './dto/get-reaction.dto';
+import { ReactionsService } from './reactions.service';
 
 @Controller('reactions')
 @ApiTags('reactions')
 export class ReactionsController {
+	constructor(private readonly reactionService: ReactionsService) {}
+
 	@Public()
 	@Get()
 	@ApiOperation({
 		summary: 'Get many reaction',
 	})
-	getManyReaction(@Query() filter: GetReactionDto) {
-		return filter;
-	}
-
-	@Public()
-	@Get(':id')
-	@ApiOperation({
-		summary: 'Get reaction by Id',
-	})
-	findReactionById(@Param('id', ParseIntPipe) id: number) {
-		return id;
-	}
-
-	@Public()
-	@Delete(':id')
-	@ApiOperation({
-		summary: 'Delete reaction by Id',
-	})
-	deleteReactionById(@Param('id', ParseIntPipe) id: number) {
-		return id;
+	async getManyReaction(@Query() filter: GetReactionDto) {
+		return await this.reactionService.findManyReaction(filter);
 	}
 }

@@ -4,6 +4,10 @@ WORKDIR /home/app
 
 ENV NODE_ENV=development
 
+RUN apk add --no-cache \
+    chromium \
+    chromium-chromedriver
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 COPY package*.json ./
 

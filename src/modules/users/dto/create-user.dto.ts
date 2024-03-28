@@ -47,4 +47,29 @@ export class CreateUserDto {
 	@IsString()
 	@ApiProperty()
 	firstName?: string;
+
+	@IsOptional()
+	@IsString()
+	@ApiProperty()
+	about?: string;
+
+	@IsOptional()
+	@IsString()
+	@ApiProperty()
+	youtubeLink?: string;
+
+	@IsOptional()
+	@IsString()
+	@ApiProperty()
+	facebookLink?: string;
+
+	@IsOptional()
+	@IsString()
+	@ApiProperty()
+	linkedinLink?: string;
+
+	@IsOptional()
+	@IsString()
+	@ApiProperty()
+	twitterLink?: string;
 }

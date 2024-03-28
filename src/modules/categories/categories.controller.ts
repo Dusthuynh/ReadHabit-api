@@ -1,7 +1,9 @@
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	Delete,
+	ForbiddenException,
 	Get,
 	Param,
 	ParseIntPipe,
@@ -11,24 +13,35 @@ import {
 	UploadedFile,
 	UseInterceptors,
 } from '@nestjs/common';
-import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+	ApiBearerAuth,
+	ApiConsumes,
+	ApiOperation,
+	ApiTags,
+} from '@nestjs/swagger';
 import { Public } from '../auth/utils';
 import { DefaultListDto } from 'src/shared/dto/default-list-dto';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { storageConfig } from 'helpers/config';
+import { deleteFile, storageConfig } from 'helpers/config';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { CategoriesService } from './categories.service';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { CurrentUserPayload } from 'src/shared/interfaces/current-user.interface';
+import { USER_ROLE } from 'src/shared/enum/user.enum';
 
 @Controller('categories')
 @ApiTags('categories')
 export class CategoriesController {
+	constructor(private readonly categoryService: CategoriesService) {}
+
 	@Public()
 	@Get('')
 	@ApiOperation({
 		summary: 'Get Many Category',
 	})
-	getManyCategory(@Query() filter: DefaultListDto) {
-		return filter;
+	async getManyCategory(@Query() filter: DefaultListDto) {
+		return await this.categoryService.findMany(filter);
 	}
 
 	@Public()
@@ -36,11 +49,11 @@ export class CategoriesController {
 	@ApiOperation({
 		summary: 'Get Category By Id',
 	})
-	findCategoryById(@Param('id', ParseIntPipe) id: number) {
-		return id;
+	async findCategoryById(@Param('id', ParseIntPipe) id: number) {
+		return await this.categoryService.findOne({ id });
 	}
 
-	@Public()
+	@ApiBearerAuth()
 	@Post()
 	@ApiOperation({
 		summary: 'Create Category',
@@ -67,14 +80,15 @@ export class CategoriesController {
 			},
 		}),
 	)
-	createCategory(
+	async createCategory(
 		@UploadedFile() categoryImage: Express.Multer.File,
 		@Body() input: CreateCategoryDto,
 	) {
-		return { input, categoryImage };
+		input.imageURL = categoryImage ? categoryImage.path : null;
+		return await this.categoryService.createCategory(input);
 	}
 
-	@Public()
+	@ApiBearerAuth()
 	@Patch(':id')
 	@ApiOperation({
 		summary: 'Update Category By Id',
@@ -101,23 +115,30 @@ export class CategoriesController {
 			},
 		}),
 	)
-	updateCategoryById(
+	async updateCategoryById(
 		@Param('id', ParseIntPipe) id: number,
 		@UploadedFile()
 		categoryImage: Express.Multer.File,
 		@Body() input: UpdateCategoryDto,
 	) {
-		console.log(id, categoryImage, input);
-		return input;
+		input.imageURL = categoryImage ? categoryImage.path : null;
+		return await this.categoryService.updateCategoryById(id, input);
 	}
 
-	@Public()
+	@ApiBearerAuth()
 	@Delete(':id')
 	@ApiOperation({
 		summary: 'Delete Category By Id',
 	})
-	deleteCategory(@Param('id', ParseIntPipe) id: number) {
-		//TODO: Before delete category, check the related
-		return id;
+	async deleteCategory(
+		@Param('id', ParseIntPipe) id: number,
+		@CurrentUser() user: CurrentUserPayload,
+	) {
+		if (user.role !== USER_ROLE.ADMIN) {
+			throw new ForbiddenException(
+				'Do not have permission to delete this category',
+			);
+		}
+		return await this.categoryService.deleteCategory(id);
 	}
 }
