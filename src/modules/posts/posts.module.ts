@@ -9,7 +9,6 @@ import { ReactionsModule } from '../reactions/reactions.module';
 import { PostSubscriber } from './posts.subscriber';
 import { CommentsModule } from '../comments/comments.module';
 import { BookmarksModule } from '../bookmarks/bookmarks.module';
-import { ScrapingModule } from '../scraping/scraping.module';
 
 @Module({
 	imports: [
@@ -19,7 +18,6 @@ import { ScrapingModule } from '../scraping/scraping.module';
 		ReactionsModule,
 		CommentsModule,
 		BookmarksModule,
-		forwardRef(() => ScrapingModule),
 	],
 	controllers: [PostsController],
 	providers: [PostsService, PostSubscriber],

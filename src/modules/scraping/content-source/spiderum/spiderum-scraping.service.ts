@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import puppeteer from 'puppeteer';
 import { POST_TYPE } from 'src/shared/enum/post.enum';
 import { PostsService } from 'src/modules/posts/posts.service';
@@ -50,7 +50,7 @@ export class SpiderumScrapingService {
 					originalPostURL: links[i],
 				});
 
-				if (!postsWithLink) {
+				if (!postsWithLink && this.isValidPath(links[i])) {
 					fillterLinks.push(links[i]);
 				}
 			}
@@ -67,6 +67,12 @@ export class SpiderumScrapingService {
 			return await this.getManyContentByLinks(mapLinks);
 		}
 		return [];
+	}
+
+	private isValidPath(path: string): boolean {
+		//NOTE: Valid article path format: https://spiderum.com/bai-dang/
+		const regex = /^https:\/\/spiderum\.com\/bai-dang\/[^/]+$/;
+		return regex.test(path);
 	}
 
 	async getManyContentByLinks(
@@ -136,5 +142,50 @@ export class SpiderumScrapingService {
 		await browser.close();
 
 		return contents;
+	}
+
+	async getOneContentByLink(url: string) {
+		const isValidPath = this.isValidPath(url);
+		if (!isValidPath) {
+			throw new BadRequestException('Invalid Url');
+		}
+
+		let content = '';
+		const browser = await puppeteer.launch({
+			args: ['--no-sandbox', '--disable-setuid-sandbox'],
+		});
+
+		const page = await browser.newPage();
+		await page.goto(url);
+
+		const isNewPostAvailable = await page.evaluate(() => {
+			return !!document.querySelector('new-post');
+		});
+
+		const isOldPostAvailable = await page.evaluate(() => {
+			return !!document.querySelector('old-post');
+		});
+
+		if (isNewPostAvailable) {
+			const divElements = await page.$$eval('div.editor > div', (elements) => {
+				return elements.map((element) => element.innerText);
+			});
+			content = divElements.join('\n');
+		}
+
+		if (isOldPostAvailable) {
+			const divElements = await page.$$eval(
+				'div.p-content > div',
+				(elements) => {
+					return elements.map((element) => element.innerText);
+				},
+			);
+			content = divElements.join('\n');
+		}
+
+		page.close();
+
+		console.log(content);
+		return content;
 	}
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import puppeteer from 'puppeteer';
 import { POST_TYPE } from 'src/shared/enum/post.enum';
 import { RSS_Viblo } from './rss/viblo-rss';
@@ -106,7 +106,7 @@ export class VibloScrapingService {
 				});
 				contents.push({
 					URL: link,
-					data: content.slice(0, 5000),
+					data: content,
 					type: POST_TYPE.EXTERNAL_POST,
 					categoryId: CATEGORY.find(
 						(category) => category.name === 'Khoa học - Công nghệ',
@@ -121,5 +121,53 @@ export class VibloScrapingService {
 		await browser.close();
 
 		return contents;
+	}
+
+	async getOneContentByLink(url: string) {
+		const isValidPath = this.isValidPath(url);
+		if (!isValidPath) {
+			throw new BadRequestException('Invalid Url');
+		}
+
+		const browser = await puppeteer.launch({
+			args: ['--no-sandbox', '--disable-setuid-sandbox'],
+		});
+
+		const page = await browser.newPage();
+
+		await page.goto(url);
+		await page.waitForSelector('.md-contents');
+		const isSelectorExists = await page.evaluate(() => {
+			return !!document.querySelector('.md-contents');
+		});
+
+		let content = '';
+		if (isSelectorExists) {
+			content = await page.evaluate(() => {
+				const allowedTags = [
+					'p',
+					'h1',
+					'h2',
+					'h3',
+					'h4',
+					'h5',
+					'h6',
+					'ul',
+					'ol',
+				];
+				const filteredTextArray = [];
+				const elements = document.querySelectorAll('.md-contents *');
+				elements.forEach((element) => {
+					if (allowedTags.includes(element.tagName.toLowerCase())) {
+						filteredTextArray.push(element.textContent.trim());
+					}
+				});
+
+				return filteredTextArray.join('\n');
+			});
+		}
+
+		await browser.close();
+		return content;
 	}
 }

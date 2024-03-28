@@ -25,6 +25,9 @@ import { CommentsService } from '../comments/comments.service';
 import { CreateBookmarkPostDto } from '../bookmark_posts/dto/create-bookmark-post.dto';
 import { BookmarksService } from '../bookmarks/bookmarks.service';
 import { deleteFile } from 'helpers/config';
+import { CurrentUserPayload } from 'src/shared/interfaces/current-user.interface';
+import { QuickGeneratePostDto } from '../scraping/dto/quick-generate-post.dto';
+import { CONTENT_SOURCE } from 'src/shared/constants/content-source.constant';
 
 @Injectable()
 export class PostsService extends BaseService<Post> {

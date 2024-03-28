@@ -1,5 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { VibloScrapingService } from './viblo/viblo-scraping.service';
+import {
+	BadRequestException,
+	ForbiddenException,
+	Injectable,
+} from '@nestjs/common';
+import { VibloScrapingService } from './content-source/viblo/viblo-scraping.service';
 import { ConfigService } from '@nestjs/config';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { PostsService } from '../posts/posts.service';
@@ -7,8 +11,12 @@ import { POST_STATUS } from 'src/shared/enum/post.enum';
 import { CreatePostDto } from '../posts/dto/create-post.dto';
 import { OnEvent } from '@nestjs/event-emitter';
 import { PostContent } from 'src/types/generate-post.interface';
-import { VnExpressScrapingService } from './vnExpress/vnExpress-scraping.service';
-import { SpiderumScrapingService } from './spiderum/spiderum-scraping.service';
+import { VnExpressScrapingService } from './content-source/vnExpress/vnExpress-scraping.service';
+import { SpiderumScrapingService } from './content-source/spiderum/spiderum-scraping.service';
+import { QuickGeneratePostDto } from './dto/quick-generate-post.dto';
+import { CurrentUserPayload } from 'src/shared/interfaces/current-user.interface';
+import { USER_ROLE } from 'src/shared/enum/user.enum';
+import { CONTENT_SOURCE } from 'src/shared/constants/content-source.constant';
 
 @Injectable()
 export class ScrapingService {
@@ -75,6 +83,69 @@ export class ScrapingService {
 
 		console.timeEnd('generate.post');
 		console.log('============ Generate Post Successfull! ============');
+	}
+
+	async quickGeneratePost(
+		user: CurrentUserPayload,
+		input: QuickGeneratePostDto,
+	) {
+		try {
+			if (user.role !== USER_ROLE.ADMIN) {
+				throw new ForbiddenException(
+					'Do not have permission to use this feature',
+				);
+			}
+			const contentSourceName = CONTENT_SOURCE.find(
+				(item) => item.id === input.contentSourceId,
+			)?.name;
+
+			if (!contentSourceName) {
+				throw new BadRequestException(
+					'The contentSource has not been processed for use with this feature',
+				);
+			}
+
+			const data = {
+				originalPostURL: input.url,
+				contentSourceId: input.contentSourceId,
+				title: '',
+				content: '',
+				tags: '',
+				isSuccess: false,
+			};
+			let crawlData = '';
+
+			switch (contentSourceName) {
+				case 'Viblo':
+					crawlData = await this.vibloService.getOneContentByLink(input.url);
+					break;
+
+				case 'Spiderum':
+					crawlData = await this.spiderumService.getOneContentByLink(input.url);
+					break;
+
+				case 'VnExpress':
+					crawlData = await this.vnExpressService.getOneContentByLink(
+						input.url,
+					);
+					break;
+
+				default:
+					break;
+			}
+
+			const generatedData = await this.createPostSummaryAndTags(crawlData);
+			if (generatedData != null && generatedData.isSuccess) {
+				data.content = generatedData.summary;
+				data.title = generatedData.title;
+				data.tags = generatedData.tags;
+				data.isSuccess = true;
+			}
+
+			return data;
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	async getAllContent() {
