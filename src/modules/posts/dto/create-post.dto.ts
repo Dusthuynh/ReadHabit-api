@@ -8,7 +8,7 @@ export class CreatePostDto {
 	createdById?: number;
 
 	@ApiHideProperty()
-	imageURL: string;
+	imageURL?: string;
 
 	@ApiProperty({ default: 1 })
 	@Type(() => Number)
@@ -48,7 +48,7 @@ export class CreatePostDto {
 
 	@ApiProperty({
 		required: false,
-		enum: [POST_STATUS.CREATED, POST_STATUS.PUBLISHED],
+		enum: [POST_STATUS.CREATED, POST_STATUS.REVIEWING],
 	})
 	@IsOptional()
 	@IsEnum(POST_STATUS)

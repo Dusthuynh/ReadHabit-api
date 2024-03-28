@@ -10,7 +10,7 @@ export class Tag extends BaseObject {
 	@Column()
 	name: string;
 
-	@Column()
+	@Column({ nullable: true })
 	categoryId: number;
 
 	@Column()

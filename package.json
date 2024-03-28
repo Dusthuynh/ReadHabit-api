@@ -23,6 +23,7 @@
 	},
 	"dependencies": {
 		"@faker-js/faker": "^8.4.1",
+		"@google/generative-ai": "^0.3.1",
 		"@nestjs/bull": "^10.0.1",
 		"@nestjs/cache-manager": "^2.1.0",
 		"@nestjs/common": "^10.0.0",
@@ -43,6 +44,7 @@
 		"nestjs-seeder": "^0.3.2",
 		"passport-jwt": "^4.0.1",
 		"pg": "^8.11.3",
+		"puppeteer": "^22.5.0",
 		"read-excel-file": "^5.6.1",
 		"reflect-metadata": "^0.1.13",
 		"rxjs": "^7.8.1",

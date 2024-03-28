@@ -125,6 +125,7 @@ export class PostsService extends BaseService<Post> {
 	}
 
 	async createPost(userId: number, input: CreatePostDto) {
+		//NOTE: create post without type: share_post
 		const { postImage, tags, ...data } = input;
 
 		if (
@@ -198,6 +199,7 @@ export class PostsService extends BaseService<Post> {
 		if (categoryId) {
 			post.categoryId = categoryId;
 			post.tags = [];
+			//TODO: remove tags unused
 			await this.postRepository.save(post);
 		}
 		if (tags) {

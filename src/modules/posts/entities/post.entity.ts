@@ -11,7 +11,6 @@ import {
 	Column,
 	Entity,
 	ManyToOne,
-	Index,
 	OneToMany,
 	ManyToMany,
 	JoinTable,

@@ -26,6 +26,7 @@ import { GlobalExceptionFilter } from './exception-filters/global-exception.filt
 import { AppLoggerMiddleware } from './interceptors/logging.interceptor';
 import { JwtAccessTokenAuthGuard } from './modules/auth/guards/jwt-access-token-auth.guard';
 import { ReactionsModule } from './modules/reactions/reactions.module';
+import { ScrapingModule } from './modules/scraping/scraping.module';
 @Module({
 	imports: [
 		TypeOrmModule.forRootAsync({
@@ -86,6 +87,7 @@ import { ReactionsModule } from './modules/reactions/reactions.module';
 		BookmarkPostsModule,
 		EventLogsModule,
 		ReactionsModule,
+		ScrapingModule,
 	],
 	controllers: [],
 	providers: [

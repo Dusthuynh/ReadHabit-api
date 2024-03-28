@@ -242,4 +242,14 @@ export class PostsController {
 	) {
 		return await this.postService.createBookmarkPost(id, userId, input);
 	}
+
+	@ApiBearerAuth()
+	@Post('generate')
+	@ApiOperation({
+		summary: 'Generate Post (auto)',
+	})
+	async generatePost() {
+		this.eventEmitter.emit('generate.post');
+		return 'task processing';
+	}
 }

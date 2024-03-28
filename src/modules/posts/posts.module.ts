@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { PostsController } from './posts.controller';
 import { PostsService } from './posts.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -9,6 +9,7 @@ import { ReactionsModule } from '../reactions/reactions.module';
 import { PostSubscriber } from './posts.subscriber';
 import { CommentsModule } from '../comments/comments.module';
 import { BookmarksModule } from '../bookmarks/bookmarks.module';
+import { ScrapingModule } from '../scraping/scraping.module';
 
 @Module({
 	imports: [
@@ -18,6 +19,7 @@ import { BookmarksModule } from '../bookmarks/bookmarks.module';
 		ReactionsModule,
 		CommentsModule,
 		BookmarksModule,
+		forwardRef(() => ScrapingModule),
 	],
 	controllers: [PostsController],
 	providers: [PostsService, PostSubscriber],
