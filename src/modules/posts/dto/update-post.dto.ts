@@ -14,6 +14,16 @@ export class UpdatePostDto {
 	@Min(1)
 	categoryId?: number;
 
+	@ApiProperty({
+		required: false,
+		type: String,
+		description: 'Array of Tags. Format: ( Tags: string1,string2 )',
+		default: 'Backend,Nestjs,Kiến thức nền tảng',
+	})
+	@IsOptional()
+	@IsString()
+	tags: string;
+
 	@ApiProperty({ required: false })
 	@IsOptional()
 	@Type(() => Number)
@@ -45,8 +55,7 @@ export class UpdatePostDto {
 
 	@ApiProperty({
 		required: false,
-		enum: POST_STATUS,
-		default: POST_STATUS.CREATED,
+		enum: [POST_STATUS.CREATED, POST_STATUS.PUBLISHED],
 	})
 	@IsOptional()
 	@IsEnum(POST_STATUS)
@@ -54,12 +63,20 @@ export class UpdatePostDto {
 
 	@ApiProperty({
 		required: false,
-		enum: POST_TYPE,
+		enum: [
+			POST_TYPE.EXTERNAL_PERSONAL_BLOG,
+			POST_TYPE.EXTERNAL_POST,
+			POST_TYPE.INTERNAL_POST,
+		],
 		default: POST_TYPE.EXTERNAL_PERSONAL_BLOG,
 	})
 	@IsOptional()
-	@IsEnum(POST_TYPE)
-	type: POST_TYPE;
+	@IsEnum([
+		POST_TYPE.EXTERNAL_PERSONAL_BLOG,
+		POST_TYPE.EXTERNAL_POST,
+		POST_TYPE.INTERNAL_POST,
+	])
+	type?: POST_TYPE;
 
 	@ApiProperty({
 		type: 'string',

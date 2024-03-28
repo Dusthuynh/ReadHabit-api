@@ -6,6 +6,7 @@ import { Post } from 'src/modules/posts/entities/post.entity';
 import { Rank } from 'src/modules/ranks/entities/rank.entity';
 import { Reaction } from 'src/modules/reactions/entities/reaction.entity';
 import { BaseObject } from 'src/shared/entities/base-object.entity';
+import { USER_ROLE } from 'src/shared/enum/user.enum';
 import {
 	Column,
 	Entity,
@@ -20,7 +21,7 @@ export class User extends BaseObject {
 	@Column({ unique: true })
 	email: string;
 
-	@Column()
+	@Column({ select: false })
 	password: string;
 
 	@Column()
@@ -34,6 +35,27 @@ export class User extends BaseObject {
 
 	@Column({ nullable: true })
 	fullName: string;
+
+	@Column({ nullable: true })
+	about: string;
+
+	@Column({ nullable: true })
+	youtubeLink: string;
+
+	@Column({ nullable: true })
+	facebookLink: string;
+
+	@Column({ nullable: true })
+	linkedinLink: string;
+
+	@Column({ nullable: true })
+	twitterLink: string;
+
+	@Column({ default: 0 })
+	totalFollower: number;
+
+	@Column({ default: 0 })
+	totalFollowee: number;
 
 	@Column({ nullable: true })
 	refreshToken: string;
@@ -50,6 +72,9 @@ export class User extends BaseObject {
 
 	@Column({ nullable: true })
 	avatar: string;
+
+	@Column({ type: 'enum', enum: USER_ROLE, default: USER_ROLE.MEMBER })
+	role: USER_ROLE;
 
 	// RELATION
 	@ManyToMany(() => Category)

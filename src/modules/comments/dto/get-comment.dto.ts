@@ -1,13 +1,35 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsOptional, IsNumber, IsString } from 'class-validator';
-import { DefaultListDto } from 'src/shared/dto/default-list-dto';
+import {
+	IsOptional,
+	IsNumber,
+	IsString,
+	IsBooleanString,
+	Matches,
+} from 'class-validator';
 
-export class GetCommentDto extends DefaultListDto {
+export class GetCommentDto {
 	@ApiProperty({
 		required: false,
+		description: 'Number of items limited',
+		default: 10,
 	})
 	@IsOptional()
+	@Transform((val) => parseInt(val.value))
+	@IsNumber()
+	limit?: number;
+
+	@ApiProperty({
+		required: false,
+		description: 'Number of items skipped',
+		default: 0,
+	})
+	@IsOptional()
+	@Transform((val) => parseInt(val.value))
+	@IsNumber()
+	offset?: number;
+
+	@ApiProperty()
 	@Transform((val) => parseInt(val.value))
 	@IsNumber()
 	postId?: number;
@@ -16,15 +38,19 @@ export class GetCommentDto extends DefaultListDto {
 		required: false,
 	})
 	@IsOptional()
-	@Transform((val) => parseInt(val.value))
-	@IsNumber()
-	userId?: number;
+	@IsString()
+	@Matches(/^(\d+,)+$/, {
+		message: 'Invalid path format.',
+	})
+	path?: string;
 
 	@ApiProperty({
-		required: false,
+		type: Boolean,
+		default: false,
 	})
-	@IsOptional()
-	@IsString()
-	//TODO: valid path for format: 1,3,4
-	path?: string;
+	@IsBooleanString()
+	@Matches(/^(true|false)$/i, {
+		message: 'The includingChildren value must be either true or false',
+	})
+	includingChildren: string;
 }

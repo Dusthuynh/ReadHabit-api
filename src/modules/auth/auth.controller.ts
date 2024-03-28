@@ -25,6 +25,7 @@ import { TokenResponse } from './dto/token-payload.dto';
 import { User } from '../users/entities/user.entity';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { userData } from 'src/seeder/data/user.data';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -36,41 +37,48 @@ export class AuthController {
 	@ApiBody({
 		type: LoginDto,
 		examples: {
-			ADMIN: {
-				summary: 'Admin',
+			ADMIN_1: {
+				summary: userData[0].username,
 				value: {
-					email: 'admin@gmail.com',
+					email: userData[0].email,
 					password: '123123123',
 				} as LoginDto,
 			},
-			// USER_1: {
-			// 	summary: 'User 1',
-			// 	value: {
-			// 		email: 'user1@gmail.com',
-			// 		password: '123123123',
-			// 	} as LoginDto,
-			// },
-			// USER_2: {
-			// 	summary: 'User 2',
-			// 	value: {
-			// 		email: 'user2@gmail.com',
-			// 		password: '123123123',
-			// 	} as LoginDto,
-			// },
-			// USER_3: {
-			// 	summary: 'User 3',
-			// 	value: {
-			// 		email: 'user3@gmail.com',
-			// 		password: '123123123',
-			// 	} as LoginDto,
-			// },
-			// USER_4: {
-			// 	summary: 'User 4',
-			// 	value: {
-			// 		email: 'user4@gmail.com',
-			// 		password: '123123123',
-			// 	} as LoginDto,
-			// },
+			ADMIN_2: {
+				summary: userData[1].username,
+				value: {
+					email: userData[1].email,
+					password: '123123123',
+				} as LoginDto,
+			},
+			USER_1: {
+				summary: userData[2].username,
+				value: {
+					email: userData[2].email,
+					password: '123123123',
+				} as LoginDto,
+			},
+			USER_2: {
+				summary: userData[3].username,
+				value: {
+					email: userData[3].email,
+					password: '123123123',
+				} as LoginDto,
+			},
+			USER_3: {
+				summary: userData[4].username,
+				value: {
+					email: userData[4].email,
+					password: '123123123',
+				} as LoginDto,
+			},
+			USER_4: {
+				summary: userData[5].username,
+				value: {
+					email: userData[5].email,
+					password: '123123123',
+				} as LoginDto,
+			},
 		},
 	})
 	@ApiCreatedResponse({ type: TokenResponse, status: 201 })

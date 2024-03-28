@@ -1,13 +1,6 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import {
-	IsEnum,
-	IsNumber,
-	IsOptional,
-	IsString,
-	Matches,
-	Min,
-} from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 import { POST_STATUS, POST_TYPE } from 'src/shared/enum/post.enum';
 
 export class CreatePostDto {
@@ -25,23 +18,13 @@ export class CreatePostDto {
 
 	@ApiProperty({
 		required: false,
-		type: [String],
-		description: 'Array of TagIds. Format: ( TagIds: string1,string2 )',
+		type: String,
+		description: 'Array of Tags. Format: ( Tags: string1, string2 )',
+		default: 'Backend, Nestjs, Kiến thức nền tảng',
 	})
 	@IsOptional()
 	@IsString()
-	@Matches(/^(\w+,)*\w+$/, {
-		message:
-			'Invalid tagIds format. Please provide a comma-separated list of strings.',
-	})
-	tagIds: string;
-
-	@ApiProperty({ required: false })
-	@IsOptional()
-	@Type(() => Number)
-	@IsNumber()
-	@Min(1)
-	sharePostId?: number;
+	tags: string;
 
 	@ApiProperty({ required: false })
 	@IsOptional()
@@ -65,15 +48,25 @@ export class CreatePostDto {
 
 	@ApiProperty({
 		required: false,
-		enum: POST_STATUS,
-		default: POST_STATUS.CREATED,
+		enum: [POST_STATUS.CREATED, POST_STATUS.PUBLISHED],
 	})
 	@IsOptional()
 	@IsEnum(POST_STATUS)
 	status?: POST_STATUS;
 
-	@ApiProperty({ enum: POST_TYPE, default: POST_TYPE.EXTERNAL_PERSONAL_BLOG })
-	@IsEnum(POST_TYPE)
+	@ApiProperty({
+		enum: [
+			POST_TYPE.EXTERNAL_PERSONAL_BLOG,
+			POST_TYPE.EXTERNAL_POST,
+			POST_TYPE.INTERNAL_POST,
+		],
+		default: POST_TYPE.EXTERNAL_PERSONAL_BLOG,
+	})
+	@IsEnum([
+		POST_TYPE.EXTERNAL_PERSONAL_BLOG,
+		POST_TYPE.EXTERNAL_POST,
+		POST_TYPE.INTERNAL_POST,
+	])
 	type: POST_TYPE;
 
 	@ApiProperty({

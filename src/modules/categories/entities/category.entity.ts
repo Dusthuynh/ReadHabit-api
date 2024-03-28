@@ -5,7 +5,7 @@ import { Column, Entity, OneToMany } from 'typeorm';
 
 @Entity()
 export class Category extends BaseObject {
-	@Column()
+	@Column({ unique: true })
 	name: string;
 
 	@Column({ nullable: true })

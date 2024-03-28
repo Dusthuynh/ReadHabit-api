@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { IsString, MinLength, IsOptional } from 'class-validator';
 
 export class CreateContentSourceDto {
@@ -14,4 +14,7 @@ export class CreateContentSourceDto {
 	})
 	@IsOptional()
 	contentSourceImage?: string;
+
+	@ApiHideProperty()
+	avatar?: string;
 }

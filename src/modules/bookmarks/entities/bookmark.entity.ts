@@ -12,12 +12,16 @@ export class Bookmark extends BaseObject {
 	@Column()
 	ownerId: number;
 
+	@Column()
+	position: number;
+
 	@ManyToOne(() => User)
 	owner: User;
 
 	@OneToMany(
 		() => BookmarkPost,
 		(bookmarkPost: BookmarkPost) => bookmarkPost.bookmark,
+		{ cascade: true },
 	)
 	bookmarkPosts: BookmarkPost[];
 }

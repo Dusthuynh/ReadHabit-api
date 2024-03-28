@@ -4,7 +4,7 @@ import { IsArray, IsNumber } from 'class-validator';
 export class CreateTagDto {
 	@IsArray()
 	@ApiProperty()
-	name: string[];
+	tags: string[];
 
 	@IsNumber()
 	@ApiProperty()
