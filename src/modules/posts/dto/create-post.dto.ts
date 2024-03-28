@@ -19,8 +19,8 @@ export class CreatePostDto {
 	@ApiProperty({
 		required: false,
 		type: String,
-		description: 'Array of Tags. Format: ( Tags: string1,string2 )',
-		default: 'Backend,Nestjs,Kiến thức nền tảng',
+		description: 'Array of Tags. Format: ( Tags: string1, string2 )',
+		default: 'Backend, Nestjs, Kiến thức nền tảng',
 	})
 	@IsOptional()
 	@IsString()
