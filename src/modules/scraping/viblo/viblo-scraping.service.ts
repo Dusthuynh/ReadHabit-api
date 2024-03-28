@@ -67,12 +67,14 @@ export class VibloScrapingService {
 		const browser = await puppeteer.launch({
 			args: ['--no-sandbox', '--disable-setuid-sandbox'],
 		});
-		const page = await browser.newPage();
+		console.log('	>> Scraping content:');
 
+		const page = await browser.newPage();
 		const contents: PostContent[] = [];
-		let i = 1;
+		let idx = 1;
+		const linkLength = links.length;
 		for (let link of links) {
-			console.log('		goto: ', link);
+			console.log(`		[${idx}/${linkLength}]  Goto: `, link);
 			await page.goto(link);
 			await page.waitForSelector('.md-contents');
 			const isSelectorExists = await page.evaluate(() => {
@@ -104,7 +106,7 @@ export class VibloScrapingService {
 				});
 				contents.push({
 					URL: link,
-					data: content,
+					data: content.slice(0, 5000),
 					type: POST_TYPE.EXTERNAL_POST,
 					categoryId: CATEGORY.find(
 						(category) => category.name === 'Khoa học - Công nghệ',
@@ -114,10 +116,7 @@ export class VibloScrapingService {
 					)?.id,
 				});
 			}
-
-			//TODO: delete break
-			if (i == 5) break;
-			i++;
+			idx++;
 		}
 		await browser.close();
 

@@ -60,6 +60,9 @@ export class VnExpressScrapingService {
 			}
 		}
 
+		mapLinks.set('Giáo dục', [
+			'https://spiderum.com/bai-dang/CANG-CAM-MA-TUY-CANG-TRO-NEN-KHONG-THE-CAN-PHA-kvz',
+		]);
 		//NOTE: generate content by links
 		if (mapLinks.size) {
 			return await this.getManyContentByLinks(mapLinks);
@@ -79,15 +82,20 @@ export class VnExpressScrapingService {
 		const browser = await puppeteer.launch({
 			args: ['--no-sandbox', '--disable-setuid-sandbox'],
 		});
+		console.log('	>> Scraping content:');
 
 		const contents: PostContent[] = [];
 		let content: string;
 
+		let idx = 1;
+		let linkLength = 0;
+		for (const [key, value] of mapLinks) {
+			linkLength += value.length;
+		}
 		for (const key of mapLinks.keys()) {
 			const links = mapLinks.get(key);
-			let i = 1;
 			for (let link of links) {
-				console.log('		goto: ', link);
+				console.log(`		[${idx}/${linkLength}]  Goto: `, link);
 				const page = await browser.newPage();
 				await page.goto(link, {
 					timeout: 10000,
@@ -136,10 +144,7 @@ export class VnExpressScrapingService {
 						(category) => category.name === 'VnExpress',
 					)?.id,
 				});
-
-				//TODO: delete break
-				if (i == 1) break;
-				i++;
+				idx++;
 			}
 		}
 		await browser.close();

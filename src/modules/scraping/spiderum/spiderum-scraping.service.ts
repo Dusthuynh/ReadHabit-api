@@ -62,10 +62,6 @@ export class SpiderumScrapingService {
 			}
 		}
 
-		mapLinks.set('Quan điểm', [
-			'https://spiderum.com/bai-dang/3-su-that-thu-vi-ve-doc-gia-Spiderum-4vC6luAkrMml',
-			'https://spiderum.com/bai-dang/CANG-CAM-MA-TUY-CANG-TRO-NEN-KHONG-THE-CAN-PHA-kvz',
-		]);
 		//NOTE: generate content by links
 		if (mapLinks.size) {
 			return await this.getManyContentByLinks(mapLinks);
@@ -79,14 +75,19 @@ export class SpiderumScrapingService {
 		const browser = await puppeteer.launch({
 			args: ['--no-sandbox', '--disable-setuid-sandbox'],
 		});
+		console.log('	>> Scraping content:');
 
 		const contents: PostContent[] = [];
 		let content: string;
-
+		let idx = 1;
+		let linkLength = 0;
+		for (const [key, value] of mapLinks) {
+			linkLength += value.length;
+		}
 		for (const key of mapLinks.keys()) {
 			const links = mapLinks.get(key);
 			for (let link of links) {
-				console.log('		goto: ', link);
+				console.log(`		[${idx}/${linkLength}]  Goto: `, link);
 				const page = await browser.newPage();
 				await page.goto(link);
 
@@ -121,13 +122,14 @@ export class SpiderumScrapingService {
 
 				contents.push({
 					URL: link,
-					data: content.slice(0, 5000),
+					data: content,
 					type: POST_TYPE.EXTERNAL_POST,
 					categoryId: CATEGORY.find((category) => category.name === key)?.id,
 					contentSourceId: CONTENT_SOURCE.find(
 						(category) => category.name === 'Spiderum',
 					)?.id,
 				});
+				idx++;
 			}
 		}
 

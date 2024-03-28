@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { VibloScrapingService } from './viblo/viblo-scraping.service';
 import { ConfigService } from '@nestjs/config';
-import {
-	GoogleGenerativeAI,
-	HarmBlockThreshold,
-	HarmCategory,
-} from '@google/generative-ai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { PostsService } from '../posts/posts.service';
 import { POST_STATUS } from 'src/shared/enum/post.enum';
 import { CreatePostDto } from '../posts/dto/create-post.dto';
@@ -42,15 +38,24 @@ export class ScrapingService {
 
 		const postContents: PostContent[] = await this.getAllContent();
 
-		const postsData: CreatePostDto[] = [];
-		console.log('	Generate with Gemini');
-		for (let content of postContents) {
+		// const postsData: CreatePostDto[] = [];
+		console.log('	>> Generate with Gemini:');
+		for (let index = 0; index < postContents.length; index++) {
+			const content = postContents[index];
+			const postLength = postContents.length;
+
 			const result = await this.createPostSummaryAndTags(content.data);
-			if (!result.isSafety) {
-				console.log(`		(NOT CREATE) This URL unsafe: ${content.URL}`);
+			if (!result.isSuccess) {
+				console.log(
+					`		[${
+						index + 1
+					}/${postLength}]  (NOT CREATE) Generate doesn't succeed: ${
+						content.URL
+					}`,
+				);
 				continue;
 			}
-			postsData.push({
+			const data: CreatePostDto = {
 				originalPostURL: content.URL,
 				type: content.type,
 				title: result.title,
@@ -59,17 +64,13 @@ export class ScrapingService {
 				categoryId: content.categoryId,
 				status: POST_STATUS.REVIEWING,
 				contentSourceId: content.contentSourceId,
-			});
-			console.log(`		(CREATED) post for URL: ${content.URL}`);
-		}
+			};
 
-		//TODO: createdById: ReadHabit Bot
-		for (let data of postsData) {
-			try {
-				await this.postService.createPost(1, data);
-			} catch (error) {
-				console.error(error);
-			}
+			//TODO: createdById: ReadHabit Bot
+			await this.postService.createPost(1, data);
+			console.log(
+				`		[${index + 1}/${postLength}]  (CREATED) post for URL: ${content.URL}`,
+			);
 		}
 
 		console.timeEnd('generate.post');
@@ -99,20 +100,20 @@ export class ScrapingService {
 
 	async createPostSummaryAndTags(text: string) {
 		try {
-			const data = { title: '', summary: '', tags: '', isSafety: true };
+			let data = { title: '', summary: '', tags: '', isSuccess: true };
 			let safetyRatings = [];
 			let hasHighProbability = false;
 
 			//NOTE: Summary post
 			const summaryPrompt = `Tóm tắt văn bản sau đây thành một đoạn nội dung có độ dài không quá 800 từ (format theo kiểu của html, có các thẻ như <p>, <h1>, ...): 
 		${text}`;
-			// console.log(summaryPrompt);
+
 			const summaryResult =
 				await this.genAiProModel.generateContent(summaryPrompt);
 			const summaryResponse = await summaryResult.response;
 			const blockReason = summaryResponse.promptFeedback.blockReason;
 			if (blockReason) {
-				data.isSafety = false;
+				data.isSuccess = false;
 				return data;
 			} else {
 				data.summary = summaryResponse.text();
@@ -143,7 +144,7 @@ export class ScrapingService {
 				(item) => item.probability === 'HIGH',
 			);
 			if (hasHighProbability) {
-				data.isSafety = false;
+				data.isSuccess = false;
 				return data;
 			} else {
 				data.title = titleResponse.text();
@@ -159,7 +160,7 @@ export class ScrapingService {
 				(item) => item.probability === 'HIGH',
 			);
 			if (hasHighProbability) {
-				data.isSafety = false;
+				data.isSuccess = false;
 				return data;
 			} else {
 				data.tags = tagsResponse.text();
