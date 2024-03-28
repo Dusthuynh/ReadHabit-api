@@ -116,7 +116,7 @@ export class PostsService extends BaseService<Post> {
 				// 	'sharedByPosts',
 				// 	'sharePost',
 				// ],
-				relations: { createdBy: true },
+				relations: { createdBy: true, tags: true },
 			}),
 		]);
 
