@@ -72,9 +72,7 @@ export class TagsService extends BaseService<Tag> {
 		});
 
 		//NOTE: process tags
-		console.log(input.tags);
 		input.tags = this.processStrings(input.tags);
-		console.log(input.tags);
 
 		const existingTags = await this.tagRepository.find({
 			where: {
