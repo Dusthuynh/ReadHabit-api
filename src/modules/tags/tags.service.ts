@@ -71,6 +71,11 @@ export class TagsService extends BaseService<Tag> {
 			id: input.categoryId,
 		});
 
+		//NOTE: process tags
+		console.log(input.tags);
+		input.tags = this.processStrings(input.tags);
+		console.log(input.tags);
+
 		const existingTags = await this.tagRepository.find({
 			where: {
 				name: In(input.tags),
@@ -92,6 +97,17 @@ export class TagsService extends BaseService<Tag> {
 
 		const newData = await this.tagRepository.save(newTags);
 		return [...newData, ...existingTags];
+	}
+
+	private processStrings(strings: string[]): string[] {
+		return strings.map((str) => {
+			let trimmedStr = str.trim();
+			let words = trimmedStr.split(/\s+/);
+			let filteredWords = words.filter((word) => word !== '');
+			let processedStr = filteredWords.join(' ');
+
+			return processedStr;
+		});
 	}
 
 	async updateTag(
